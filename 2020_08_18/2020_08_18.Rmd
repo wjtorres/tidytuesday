@@ -1,0 +1,179 @@
+---
+title: "TidyTuesday - Plants in Danger"
+author: "wjtorres"
+date: '2020-08-18'
+output:
+  html_document:
+    keep_md: yes
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(ggthemes) # for theme I like
+library(ggtext) # to add color to certain variable levels
+library(patchwork) # for side by side plots
+```
+
+# Load the weekly Data
+
+Download the weekly data and make available in the `tt` object.
+
+```{r Load}
+
+tt <- tt_load("2020-08-18")
+
+```
+
+# Pull data
+
+```{r}
+
+plants <- tt$plants
+threats <- tt$threats
+actions <- tt$actions
+
+```
+
+# View plants data
+
+```{r}
+head(plants)
+tail(plants)
+
+# view plants structure
+str(plants)
+
+# glimpse
+glimpse(plants)
+
+# is each binomial name unique?
+length(unique(plants[["binomial_name"]])) 
+
+# which countries are in plants?
+n_distinct(plants$country) # there are 72 countries
+unique(plants$country) # and here are the 72 country names
+plants %>%
+  group_by(country) %>%
+  summarise(percentage = n()/500) %>%
+  arrange(desc(percentage))
+
+# which continents are in plants?
+n_distinct(plants$continent) # there are 6 continents
+unique(plants$continent) # and here are the 6 continent names
+
+# what groups are in plants?
+n_distinct(plants$group) # there are 6 groups
+unique(plants$group) # and here are the 6 plant names
+
+# what red list categories are in plants?
+n_distinct(plants$red_list_category) # there are 2 groups in this data frame for plants that are considered to be in danger
+unique(plants$red_list_category) # the group labels are "Extinct in the wild" or "Extinct"
+
+# How is year_last_seen measured? it looks like it is a character string
+n_distinct(plants$year_last_seen)
+unique(plants$year_last_seen) # looks like 8 date ranges in increments of 19 years
+
+
+
+```
+
+# Data visualization - where are the plants in most danger located?
+
+```{r, fig.width = 6, fig.asp = 0.618}
+
+plot1 <- plants %>%
+  group_by(country) %>%
+  summarize(n = n()) %>%
+  mutate(highlight_flag = ifelse(country %in% c("Madagascar", "United States", "Ecuador"), T, F)) %>%
+  ggplot(aes(reorder(country,n), n, fill = highlight_flag)) +
+  geom_bar(stat = "identity", show.legend = F) +
+  coord_flip() +
+  theme_fivethirtyeight() +
+  labs(
+    title = "As of 2020,there are 500 plant species considered extinct",
+    subtitle = "Most are located in Madagascar, United States, and Ecuador",
+    caption = "source =  Data from International Union for Conservation of Nature (IUCN) Red list of Threatened Species (Version 2020-1)",
+    x = "Country",
+    y = "Red List Category"
+    ) +
+  scale_fill_manual(values = c('#595959', 'darkorange1'))
+
+plot1
+
+```
+# Data Visualization - When where the plants last seen for countries with the most extinct plants?
+
+```{r, fig.width = 7, fig.asp = 0.618}
+
+# select only countries with most extinct plants 
+
+plants_small <-
+  plants %>%
+  filter(country %in% c("Madagascar", "United States", "Ecuador"))
+
+# create ordered variables for graphing
+
+plants_small$year_last_seen_factor_ordered <- factor(plants_small$year_last_seen, ordered = TRUE, 
+                                levels = c("Before 1900", "1900-1919", "1920-1939", "1940-1959", "1960-1979", "1980-1999", "2000-2020"))
+
+plants_small$country_ordered <- factor(plants_small$country,levels = c("Ecuador", "United States", "Madagascar"))
+
+# plot
+
+plot2 <- plants_small %>%
+  filter(!is.na(year_last_seen_factor_ordered)) %>%
+  ggplot(aes(country_ordered, fill = year_last_seen_factor_ordered)) +
+  geom_bar() +
+  theme_fivethirtyeight() +
+  labs(
+    title = "When were plants last seen?",
+    fill = "Year last seen:"
+    ) +
+  theme(legend.position = "bottom") +
+  coord_flip()
+
+plot2
+
+```
+
+# Data visualization - what are the threats for the plants that are in most danger?
+
+```{r,fig.width = 10, fig.asp = 0.618}
+
+# focus  on countries with most extinct plants
+
+threats_small <- threats %>%
+   filter(country %in% c("Madagascar", "United States", "Ecuador"))
+
+# create ordered variables
+
+threats_small$country_ordered <- factor(threats_small$country, levels = c("Ecuador", "United States", "Madagascar"))
+
+# plot
+
+plot3 <- threats_small %>%
+  filter(threatened == 1) %>%
+  ggplot(aes(country_ordered, fill = threat_type)) +
+  geom_bar() +
+  theme_fivethirtyeight() +
+  labs(
+    title = "What are the threats?",
+    fill = "Threat type:"
+    ) +
+  theme(legend.position = "bottom") +
+  coord_flip()
+
+plot3
+```
+
+# Data visualization - side by side by side
+```{r, fig.width = 22, fig.asp = 0.618}
+
+plot1 + (plot2/plot3)
+
+```
