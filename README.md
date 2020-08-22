@@ -1,6 +1,6 @@
 ## TidyTuesday Contributions
 
-These are my contributions to the [#TinyTuesday](https://github.com/rfordatascience/tidytuesday) challenge organized by the [R4DS online learning community](https://twitter.com/r4dscommunity).
+These are my contributions to the [#TidyTuesday](https://github.com/rfordatascience/tidytuesday) challenge organized by the [R4DS online learning community](https://twitter.com/r4dscommunity).
 
 ### Week 34 | 2020-08-18 | Extinct Plants
 
