@@ -396,7 +396,7 @@ class(chopped)</code></pre>
 <h1>Wrangle and Visualize</h1>
 <pre class="r"><code># plot
 chopped %&gt;%
-  filter(season &lt;= 42) %&gt;% # removing seasons with the majority of episode ratings missing
+  filter(season &lt;= 42) %&gt;% # removing seasons with the majority of episode ratings missing; note there are still episodes missing in seasons included in plot, per warning message
   ggplot(aes(x = episode_rating, y = season, group = season, fill = factor(stat(quantile)))) +
   stat_density_ridges(
     geom = &quot;density_ridges_gradient&quot;, 

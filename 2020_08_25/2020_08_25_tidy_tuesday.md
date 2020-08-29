@@ -64,7 +64,7 @@ class(chopped)
 ```r
 # plot
 chopped %>%
-  filter(season <= 42) %>% # removing seasons with the majority of episode ratings missing
+  filter(season <= 42) %>% # removing seasons with the majority of episode ratings missing; note there are still episodes missing in seasons included in plot, per warning message
   ggplot(aes(x = episode_rating, y = season, group = season, fill = factor(stat(quantile)))) +
   stat_density_ridges(
     geom = "density_ridges_gradient", 
