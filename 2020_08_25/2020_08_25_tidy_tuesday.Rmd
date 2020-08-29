@@ -1,0 +1,69 @@
+---
+title: "TidyTuesday - Chopped"
+author: "wjtorres"
+date: '2020-08-25'
+output:
+  html_document:
+    keep_md: yes
+  pdf_document: default
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(ggthemes) # for theme I like
+library(ggridges) # for plotting
+```
+
+# Load the weekly Data
+
+Download the weekly data and make available in the `tt` object.
+
+```{r Load}
+
+tt <- tt_load("2020-08-25")
+
+```
+
+
+# Pull Tibble
+
+Pull the tibble from the `tt` object.
+
+```{r}
+chopped <- tt$chopped
+
+class(chopped)
+
+```
+
+# Wrangle and Visualize
+
+```{r}
+# plot
+chopped %>%
+  filter(season <= 42) %>% # removing seasons with the majority of episode ratings missing
+  ggplot(aes(x = episode_rating, y = season, group = season, fill = factor(stat(quantile)))) +
+  stat_density_ridges(
+    geom = "density_ridges_gradient", 
+    calc_ecdf = TRUE, # needed for calculating quantiles; cumulative
+    quantiles = 2, quantile_lines = TRUE, # specifies number of quantiles
+    scale = 6 # determines amount of overlap between the density plots
+    ) +
+  scale_fill_viridis_d(name = "Quartiles") +
+  scale_x_continuous(breaks=seq(5,10,.5)) +
+  scale_y_continuous(breaks=seq(1,42,3)) +
+  labs(
+      title = "Chopped: IMDB Episode Ratings",
+      x = "IMDB Episode Rating (0 - 10 scale)",
+      y = "Season",
+      caption = "source:Kaggle & IMDB"
+      ) +
+  theme_solarized()
+ 
+```
