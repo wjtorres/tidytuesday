@@ -10,24 +10,36 @@ output:
 
 # TidyTuesday
 
-```{r setup, include=FALSE}
 
-knitr::opts_chunk$set(echo = TRUE)
-
-library(tidyverse)
-library(tidytuesdayR)
-library(ggthemes) # for theme I like
-library(ggridges) # for plotting
-```
 
 # Load the weekly Data
 
 Download the weekly data and make available in the `tt` object.
 
-```{r Load}
 
+```r
 tt <- tt_load("2020-08-25")
+```
 
+```
+## --- Compiling #TidyTuesday Information for 2020-08-25 ----
+```
+
+```
+## --- There is 1 file available ---
+```
+
+```
+## --- Starting Download ---
+```
+
+```
+## 
+## 	Downloading file 1 of 1: `chopped.tsv`
+```
+
+```
+## --- Download complete ---
 ```
 
 
@@ -35,19 +47,24 @@ tt <- tt_load("2020-08-25")
 
 Pull the tibble from the `tt` object.
 
-```{r}
+
+```r
 chopped <- tt$chopped
 
 class(chopped)
+```
 
+```
+## [1] "spec_tbl_df" "tbl_df"      "tbl"         "data.frame"
 ```
 
 # Wrangle and Visualize
 
-```{r}
+
+```r
 # plot
 chopped %>%
-  filter(season <= 42) %>% # removing seasons with the majority of episode ratings missing; note there are still episodes missing in seasons included in plot, per warning message
+  filter(season <= 42) %>% # removing seasons with the majority of episode ratings missing
   ggplot(aes(x = episode_rating, y = season, group = season, fill = factor(stat(quantile)))) +
   stat_density_ridges(
     geom = "density_ridges_gradient", 
@@ -65,5 +82,14 @@ chopped %>%
       caption = "source:Kaggle & IMDB"
       ) +
   theme_solarized()
- 
 ```
+
+```
+## Picking joint bandwidth of 0.315
+```
+
+```
+## Warning: Removed 68 rows containing non-finite values (stat_density_ridges).
+```
+
+![](2020_08_25_tidy_tuesday_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
