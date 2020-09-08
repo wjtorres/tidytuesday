@@ -2,7 +2,11 @@
 
 These are my contributions to the [#TidyTuesday](https://github.com/rfordatascience/tidytuesday) challenge organized by the [R4DS online learning community](https://twitter.com/r4dscommunity).
 
-### 2020-08-28 | Week 35| Chopped Ratings
+### 2020-09-01 | Week 36 | Global Crop Yields
+
+![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_09_01/mygif.gif)
+
+### 2020-08-28 | Week 35 | Chopped Ratings
 
 ![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_08_25/2020_08_25_tidy_tuesday_files/figure-html/unnamed-chunk-2-1.png)
 
