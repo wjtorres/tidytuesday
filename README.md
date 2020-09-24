@@ -2,6 +2,10 @@
 
 These are my contributions to the [#TidyTuesday](https://github.com/rfordatascience/tidytuesday) challenge organized by the [R4DS online learning community](https://twitter.com/r4dscommunity).
 
+### 2020-09-23 | Week 39 | Himalayan Climbers
+
+![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_09_22/My%20TidyTuesday%20Plot.png)
+
 ### 2020-09-15 | Week 38 | US Spending on Kids
 
 ![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_09_15/My%20TidyTuesday%20Plot.png)
