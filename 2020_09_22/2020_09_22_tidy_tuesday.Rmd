@@ -1,0 +1,96 @@
+---
+title: "TidyTuesday - Himalayan Climbing Expeditions"
+author: "wjtorres"
+date: '2020-09-22'
+output:
+  html_document:
+    keep_md: yes
+  pdf_document: default
+---
+
+# TidyTuesday
+
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+
+```
+
+# Load the weekly Data
+
+Download the weekly data and make available in the `tt` object.
+
+```{r Load}
+
+tt <- tt_load("2020-09-22")
+
+```
+
+
+# Readme
+
+Take a look at the readme for the weekly data to get insight on the dataset.
+This includes a data dictionary, source, and a link to an article on the data.
+
+```{r Readme, eval = interactive()}
+
+tt
+
+```
+
+# Pull Available Datasets
+
+```{r}
+
+members <- tt$members
+
+```
+
+
+# Glimpse Data
+
+Take an initial look at the format of the data available.
+
+```{r Glimpse}
+
+members %>%
+  glimpse()
+
+```
+
+
+```{r}
+
+# create df to use for plotting
+members2 <- members %>%
+  filter(!is.na(age)) %>%
+  group_by(age, success) %>%
+  dplyr::summarise(count = n())
+
+## barplots for success = FALSE goes to the left (needs negative sign)
+
+members2$count <- ifelse(members2$success == "FALSE", -1*members2$count, members2$count)
+
+## pyramid charts = two barcharts with axes flipped
+ggplot(members2, aes(x = age, y = count, fill = success)) + 
+  geom_bar(data = subset(members2, success == "FALSE"), stat = "identity") +
+  geom_bar(data = subset(members2, success == "TRUE"), stat = "identity") +
+  scale_y_continuous(breaks = c(-2000, -1000, 0, 1000, 2000),
+                     labels = paste0(as.character(c("2000", "1000", "0", "1000", "2000")))) +
+  scale_x_continuous(breaks = seq(0, 90, 5)) +
+  labs(title = "Success in Summitting a Main Peak or Sub-Peak by Age",
+       x = "Age",
+       y = "Number of Summits",
+       caption = "source = The Himalayan Database \n graph by @wjtorres") +
+  coord_flip() +
+  scale_fill_discrete(name = NULL,
+                      breaks = c("FALSE", "TRUE"),
+                      labels = c("Unsuccessful", "Successful")) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+
+```
