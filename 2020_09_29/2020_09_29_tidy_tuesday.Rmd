@@ -1,0 +1,77 @@
+---
+title: "TidyTuesday - Taylor Swift"
+author: "wjtorres"
+date: '2020-09-29'
+output:
+  html_document:
+    keep_md: yes
+  pdf_document: default
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(tidytext)
+library(ggthemes)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+swift <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-29/taylor_swift_lyrics.csv')
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+tidy_lyrics <- swift %>%
+  unnest_tokens(word, Lyrics)
+
+data(stop_words)
+
+tidy_lyrics <- tidy_lyrics %>%
+  anti_join(stop_words)
+
+tidy_lyrics %>%
+  count(word, sort = TRUE)
+
+```
+
+# Visualize
+
+```{r Visualize}
+
+tidy_lyrics %>%
+  group_by(word) %>%
+  summarise(count = n()) %>%
+  filter(count >= 50) %>%
+  ggplot(aes(reorder(word,count), count)) +
+  geom_col(fill="plum3") +
+  labs(title = "Top 50 Words in Taylor Swift Lyrics",
+      x = NULL,
+      y = "Count",
+      caption = "source =  Rosie Baillie and Dr. Sara Stoudt \n graph by @wjtorres") +
+  coord_flip() +
+  theme_minimal()
+  
+```
+
+# Save Image
+
+```{r}
+
+# This will save your most recent plot
+# ggsave(
+  # filename = "My TidyTuesday Plot.png",
+  # device = "png")
+
+```
