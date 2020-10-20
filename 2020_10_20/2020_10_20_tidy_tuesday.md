@@ -1,0 +1,117 @@
+---
+title: "TidyTuesday - Great American Beer Festival Data"
+author: "wjtorres"
+date: '2020-10-20'
+output:
+  html_document:
+    keep_md: yes
+  pdf_document: default
+---
+
+# TidyTuesday
+
+
+
+# Load the weekly Data
+
+Download the weekly data and make available in the `tt` object.
+
+
+```r
+tt <- tt_load("2020-10-20")
+```
+
+```
+## --- Compiling #TidyTuesday Information for 2020-10-20 ----
+```
+
+```
+## --- There is 1 file available ---
+```
+
+```
+## --- Starting Download ---
+```
+
+```
+## 
+## 	Downloading file 1 of 1: `beer_awards.csv`
+```
+
+```
+## --- Download complete ---
+```
+
+
+# Pull DF
+
+
+```r
+beer <- tt$beer_awards
+```
+
+
+# Create Texas DF
+
+
+```r
+texas_beer <- beer %>%
+  filter(state == "TX")
+```
+
+
+# Visualize
+
+
+```r
+# medals as ordered factored levels
+
+texas_beer$medal <- factor(texas_beer$medal, 
+                           c("Gold", "Silver", "Bronze"),
+                           levels = c("Gold", "Silver", "Bronze"),
+                           ordered = TRUE)
+
+texas_beer %>%
+  group_by(city) %>%
+  mutate(count = n()) %>%
+  ggplot(aes(x = reorder(city, count), fill = medal)) + 
+  geom_bar(position = "stack") +
+  scale_fill_manual(values=c("#FFCC33", "#999999", "#CC6600")) +
+  labs(title = "Great American Beer Festival Medal Winner Analysis (1987-2020)", 
+       subtitle = "Texas Edition",
+       x = NULL,
+       y = "Number of Medal Awards",
+       caption = "source = Great American Beer Festival \ngraph by @wjtorres") +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text = element_text(color = "white", size = 8),
+    axis.title = element_text(color = "white", size = 8),
+    plot.caption = element_text(color = "white", size = 8),
+    plot.title = element_text(color = "white", size = 14),
+    plot.subtitle = element_text(color = "white", size = 12),
+    legend.title = element_text(color = "white", size = 8),
+    legend.text = element_text(color = "white", size = 8),
+    panel.border = element_rect(color = "#BF0A30", fill = NA, size = 2),
+    plot.background = element_rect(fill = "#002868")) +
+  coord_flip() 
+```
+
+![](2020_10_20_tidy_tuesday_files/figure-html/Visualize-1.png)<!-- -->
+
+# Save Image
+
+Save your image for sharing. Be sure to use the `#TidyTuesday` hashtag in your post on twitter! 
+
+
+```r
+# This will save your most recent plot
+ggsave(
+  filename = "My TidyTuesday Plot.png",
+  device = "png")
+```
+
+```
+## Saving 7 x 5 in image
+```
