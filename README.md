@@ -2,6 +2,10 @@
 
 These are my contributions to the [#TidyTuesday](https://github.com/rfordatascience/tidytuesday) challenge organized by the [R4DS online learning community](https://twitter.com/r4dscommunity).
 
+### 2020-10-20 | Week 43 | Great American Beer Festival Data
+
+![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_10_20/My%20TidyTuesday%20Plot.png)
+
 ### 2020-10-13 | Week 42 | DatasauRus Dozen
 
 ![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_10_13/My%20TidyTuesday%20Plot.png)
