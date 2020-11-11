@@ -1,0 +1,131 @@
+---
+title: "TidyTuesday - Historical Phone Usage"
+author: "wjtorres"
+date: '2020-11-10'
+output:
+  html_document:
+    keep_md: yes
+  pdf_document: default
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(ggalt) # for geom_dumbbell() function
+
+```
+
+# Load the weekly Data
+
+Download the weekly data and make available in the `tt` object.
+
+```{r Load}
+
+tt <- tt_load("2020-11-10")
+
+```
+
+
+# Pull Data
+
+
+```{r }
+
+mobile <- tt$mobile
+
+```
+
+# Explore
+
+```{r}
+mobile %>%
+  group_by(year) %>%
+  summarise(non_na_count = sum(!is.na(mobile_subs))) # will use 2007 to 2017 mobile subs
+```
+
+# Wrangle
+
+```{r}
+# subset data
+mobile_long <- mobile %>%
+  filter(
+    continent == "Africa" &
+    year %in% c("2007", "2017")
+    ) %>%
+  select(entity, year, mobile_subs)
+
+# convert data to wide format
+mobile_wide <- spread(mobile_long, year, mobile_subs) 
+
+# rename columns
+names(mobile_wide) <- c("country", "y2007", "y2017")
+
+# remove missing values
+mobile_wide <- mobile_wide %>%
+  drop_na() # drop all rows containing missing values
+
+```
+
+
+# Visualize
+
+```{r Visualize, fig.width = 8, fig.height = 8}
+
+mobile_wide %>%
+  ggplot(aes(x = y2007,
+             xend = y2017,
+             y = reorder(country, y2007))) +
+  geom_dumbbell(size = 1, 
+                size_x = 3,
+                size_xend = 3,
+                color = "honeydew",
+                colour_x = "slateblue4",
+                colour_xend = "slateblue1") +
+  geom_text(color = "black",
+            size = 2.5,
+            hjust = 2,
+            aes(x = y2007,
+                label = round(y2007, 0))) +
+  geom_text(color = "black", 
+            size = 2.5,
+            hjust = -.5,
+            aes(x = y2017,
+                label = round(y2017, 0))) +
+  labs(
+    title = "Increase in Mobile Phone Subscriptions in Africa",
+    subtitle = "Years: 2007 to 2017",
+    x = "Subscriptions (per 100 people)", 
+    y = "") +
+  theme_minimal() +
+   theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text = element_text(color = "white", size = 10),
+    axis.title = element_text(color = "white", size = 10),
+    plot.caption = element_text(color = "white", size = 10),
+    plot.title = element_text(color = "white", size = 18),
+    plot.subtitle = element_text(color = "white", size = 14),
+    plot.background = element_rect(fill = "#69A2B0"))
+
+  
+```
+
+# Save Image
+
+Save your image for sharing. Be sure to use the `#TidyTuesday` hashtag in your post on twitter! 
+
+```{r}
+
+# This will save your most recent plot
+# ggsave(
+#   filename = "My TidyTuesday Plot.png",
+#   width = 8,
+#   height = 8,
+#   device = "png")
+
+```
