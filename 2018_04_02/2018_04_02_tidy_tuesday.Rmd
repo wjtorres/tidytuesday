@@ -1,0 +1,129 @@
+---
+title: "TidyTuesday - US Tuition Costs"
+author: "wjtorres"
+date: '2020-11-15'
+tidytuesday date: '2018-04-02'
+output:
+  html_document:
+    keep_md: yes
+  pdf_document: default
+---
+
+# TidyTuesday
+
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(extrafont)
+loadfonts(device = "win")
+library(gghighlight)
+library(scales) # to use dollar sign in y-axis
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2018-04-02")
+
+```
+
+# Pull Data
+
+```{r}
+tuition <- tt$us_avg_tuition
+```
+
+
+# Wrangle
+
+```{r Wrangle}
+
+# examine column names
+colnames(tuition)
+
+# change column names; academic year to year; un-capitalize State column
+tuition <- tuition %>%
+  rename(
+    "state" = "State",
+    "2004" = "2004-05",
+    "2005" = "2005-06",
+    "2006" = "2006-07",
+    "2007" = "2007-08",
+    "2008" = "2008-09",
+    "2009" = "2009-10",
+    "2010" = "2010-11",
+    "2011" = "2011-12",
+    "2012" = "2012-13",
+    "2013" = "2013-14",
+    "2014" = "2014-15",
+    "2015" = "2015-16")
+
+# pivot data from wide to long 
+tuition <- pivot_longer(tuition, 
+                        cols = "2004":"2015",
+                        names_to = "year",
+                        values_to = "cost")
+
+# add a change column and a percentage of change column (2015 tuition - 2004 tuition and that is divided by 2015 tuition)
+
+tuition <- tuition %>%
+  group_by(state) %>%
+  arrange(year) %>%
+  mutate(change = (last(cost) - first(cost)),
+         change_perc = change/first(cost)*100) %>%
+  ungroup()
+  
+```
+
+
+# Visualize
+
+```{r Visualize, fig.width = 7}
+
+tuition %>%
+  ggplot(aes(x = as.numeric(year), y = cost, color = state)) + 
+  geom_line(size = 2) + # sets the aes for gghighlighted values
+  geom_point(size = 4) + # sets the aes for gghighlighted values
+  scale_colour_viridis_d() + # sets the aes for gghighlighted values
+  gghighlight(change_perc > 100,
+              unhighlighted_params = list(color = "grey", size = .5)) + # choose how unhighlighted looks
+  scale_x_continuous(breaks = seq(2004, 2015, 1)) +
+  scale_y_continuous(labels = scales::dollar_format()) +
+  labs(
+    title = "U.S. College Tuition Costs",
+    subtitle = "Tuition costs increased over 100% in three states between 2004 and 2015",
+    x = NULL,
+    y = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "Palatino Linotype"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text = element_text(color = "black", size = 10),
+    axis.title = element_text(color = "black", size = 10),
+    plot.caption = element_text(color = "black", size = 10),
+    plot.title = element_text(color = "black", size = 16, face = "bold"),
+    plot.subtitle = element_text(color = "black", size = 12),
+    plot.background = element_rect(fill = "white"))
+  
+```
+
+# Save Image
+
+```{r}
+
+# This will save your most recent plot
+# ggsave(
+#   filename = "My TidyTuesday Plot.png",
+#   width = 7,
+#   dpi = 300,
+#   device = "png")
+
+```
