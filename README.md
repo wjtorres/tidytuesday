@@ -2,7 +2,7 @@
 
 These are my contributions to the [#TidyTuesday](https://github.com/rfordatascience/tidytuesday) challenge organized by the [R4DS online learning community](https://twitter.com/r4dscommunity).
 
-### 2020-11-10 | Week 46 | Historical Phones
+### [2020-11-10](https://github.com/wjtorres/tidytuesday/tree/master/2020_11_10) | Week 46 | Historical Phones
 
 ![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_11_10/My%20TidyTuesday%20Plot.png)
 
