@@ -1,6 +1,10 @@
 ## TidyTuesday Contributions
-
+ 
 These are my contributions to the [#TidyTuesday](https://github.com/rfordatascience/tidytuesday) challenge organized by the [R4DS online learning community](https://twitter.com/r4dscommunity).
+
+<details>
+  <summary>2020 codes and plots</summary>
+
 
 ### 2020-11-10 | Week 46 | Historical Phones
 
@@ -58,6 +62,13 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_08_11/2020_08_11_files/figure-html/Visualize-1.png)](https://github.com/wjtorres/tidytuesday/tree/master/2020_08_11) 
 
+</details>
+
+<details>
+  <summary>2018 codes and plots</summary>
+
 ### 2018-04-02 | Week 1 | US Tuition Costs
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2018_04_02/My%20TidyTuesday%20Plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2018_04_02) 
+
+</details>
