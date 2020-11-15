@@ -57,3 +57,7 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 ### [2020-08-11](https://github.com/wjtorres/tidytuesday/tree/master/2020_08_11) | Week 33 | Avatar
 
 ![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_08_11/2020_08_11_files/figure-html/Visualize-1.png)
+
+### [2018-04-02](https://github.com/wjtorres/tidytuesday/tree/master/2018_04_02) | Week 1 | US Tuition Costs
+
+![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2018_04_02/My%20TidyTuesday%20Plot.png)
