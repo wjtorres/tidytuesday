@@ -1,0 +1,119 @@
+---
+title: "TidyTuesday - #BlackInDataWeek"
+author: "wjtorres"
+date: '2020-11-17'
+output:
+  html_document
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(gt) # for table
+library(extrafont) # for table fonts
+loadfonts(device = "win")
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+black_in_data <- data.frame(
+  date = seq(as.Date("2020-11-16"), as.Date("2020-11-21"), 1),
+  hashtag = c("#BlackInDataRollCall",
+              "#BlackInDataJourney",
+              "#BlackInDataSkills",
+              "#BlackInDataViz",
+              "#BlackInDataJustice", 
+              "#BlackInDataMentorship"),
+  purpose = c(
+    "Giving Black people in data a space to introduce themselves and their work. Introducing and valuing intersecting parts of their identities. We welcome contributions from a wide spectrum of Data Fields including but not limited to Informatics, Technology, Data Science, Coding, Social Science and Data Analytics.",
+    "Further fostering community for Black people in data, by encouraging them to share their varied journeys in data.",
+    "Discussing the skills Black people in data have learned, communal sharing of resources and advice for skills development.",
+    "Creating space for Black people in data to share their work in the form of favourite data visualisation images.",
+    "Hosting forums for learning and discussion of bias in the data field (and possible paths to address biases in data).",
+    "Join us for career development and mentorship events!"
+  ),
+  link = c(
+    "https://blkindata.github.io/project/blackindatarollcall/",
+    "https://blkindata.github.io/project/blackindatajourney/",
+    "https://blkindata.github.io/project/blackindataskills/",
+    "https://blkindata.github.io/project/blackindataviz/",
+    "https://blkindata.github.io/project/blackindatajustice/",
+    "https://blkindata.github.io/project/blackindatacommunity/"
+  )
+)
+
+```
+
+
+# Visualize
+
+```{r}
+
+black_in_data %>%
+  gt() %>%
+  fmt_date( 
+    columns = vars(date),
+    date_style = 3 # format dates
+  ) %>% # can use tab options to modify table parts (https://gt.rstudio.com/reference/index.html#section-create-or-modify-parts)
+  tab_header(
+    title = md("**#BlackInDataWeek**"), # can specify markdown to use **bold**
+    subtitle = "November 16 - 21, 2020"
+    ) %>%
+  tab_source_note(md("*To learn more about #BlackInDataWeek, visit https://blkindata.github.io*")) %>%
+  tab_options(source_notes.background.color = "#f8f1e5",
+              column_labels.border.top.color = "#262626",
+              column_labels.border.top.width = px(15)) %>%
+  tab_style( # can use tab styles to modify more targeted table parts  (https://gt.rstudio.com/reference/index.html#section-create-or-modify-parts)
+    style = list(
+      cell_fill(color = "#262626"),
+      cell_text(color = "#f9ba32", size = 60, font = "Impact")),
+    locations = cells_title(groups = "title") # modify title
+    ) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#262626"),
+      cell_text(color = "#f8f1e5", size = 40, font = "Impact")),
+    locations = cells_title(groups = "subtitle") # modify subtitle
+    ) %>%
+   tab_style(
+    style = list(
+      cell_fill(color = "#262626"),
+      cell_text(color = "#f8f1e5", size = 20, font = "Baskerville")),
+    locations = cells_column_labels( # modify certain column labels
+      columns = vars("date")
+    )) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#262626"),
+      cell_text(color = "#f8f1e5", size = 20, font = "Cambria")),
+    locations = cells_column_labels( # modify certain column labels
+      columns = vars("hashtag", "purpose", "link")
+    )) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#426e86"),
+      cell_text(color = "#f8f1e5", size = 16, font = "Cambria")),
+    locations = cells_body( # modify certain cells
+      columns = vars("date")
+    )) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#262626"),
+      cell_text(color = "#f8f1e5", size = 16, font = "Cambria")),
+    locations = cells_body( # modify certain cells
+      columns = vars("hashtag", "purpose", "link")
+    )) %>%
+  cols_width( # can specify column widths for each column
+    vars(date) ~ px(150),
+    vars(hashtag) ~ px(200),
+    vars(purpose) ~ px(400),
+    vars(link) ~ px(430))
+```
