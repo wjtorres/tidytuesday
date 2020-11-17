@@ -5,6 +5,9 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 <details>
   <summary>2020 codes and plots</summary>
 
+### 2020-11-17 | Week 47 | #BlackInDataWeek
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_11_17/my_table.JPG)](https://github.com/wjtorres/tidytuesday/tree/master/2020_11_17)
 
 ### 2020-11-10 | Week 46 | Historical Phones
 
