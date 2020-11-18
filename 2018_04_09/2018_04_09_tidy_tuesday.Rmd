@@ -1,0 +1,117 @@
+---
+title: "TidyTuesday - NFL Salary"
+author: "wjtorres"
+date: '2020-11-17'
+tidytuesday date: '2018-04-09'
+output:
+  html_document
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(scales) # to use dollar sign in y-axis
+library(showtext) # to use font I downloaded - Freshman
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2018-04-09")
+
+```
+
+# Pull Data
+
+```{r Glimpse}
+
+nfl_salary <- tt$nfl_salary
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+# pivot from wide to long format
+
+nfl_salary <- pivot_longer(nfl_salary, 
+                           cols = "Cornerback":"Wide Receiver",
+                           names_to = "position",
+                           values_to = "salary")
+```
+
+# Visualize
+
+```{r fig.showtext = TRUE}
+# load fonts used in plot (showtext package)
+font_add(family = "Freshman", regular = "C:/Users/jacki/AppData/Local/Microsoft/Windows/Fonts/Freshman.ttf")
+font_add(family = "Cambria", regular = "C:/Windows/Fonts/Cambria.ttc")
+
+# show that you want to use showtext to render text
+showtext_auto()
+
+# create my custom theme
+my_theme <-  theme(
+    plot.title = element_text(family = "Freshman", size = 28, hjust = .5, color = "#DA2127", face = "bold"),
+    axis.text = element_text(family = "Freshman", size = 12, color = "#013369"),
+    plot.caption = element_text(family = "Freshman", size = 8, color = "#DA2127"),
+    plot.background = element_rect(fill = "white"),
+    panel.background = element_rect(fill = "white"))
+
+
+# create my plot
+set.seed(17) # set seed for reproducible jitter points; important for annotation
+
+myplot <-nfl_salary %>%
+  filter(position == "Quarterback") %>%
+  ggplot(aes(x = as.factor(year), # identify year as a factor, discrete variable
+             y = salary)) +
+  geom_violin(fill = "#013369" ) +
+  geom_jitter(color = "#DA2127",
+              size = 2,
+              alpha = .4,
+              height = .4,
+              width = .2) +
+  geom_text(
+    label = "$37,000,000",
+    x = "2017",
+    y = 33000000,
+    color = "#013369", size = 4) +
+  annotate(
+    geom = "curve", 
+    x = "2017", 
+    y = 34000000, 
+    xend = "2018", 
+    yend = 37000000, 
+    curvature = "-.3",
+    arrow = arrow(length = unit(2, "mm")),
+    color = "#013369") +
+  scale_x_discrete(breaks = seq(2011, 2018, 1)) +
+  scale_y_continuous(breaks = seq(0, 40000000, by = 5000000), labels = dollar_format()) +
+  labs(title = "NFL Quarterback Salaries",
+       x = NULL,
+       y = NULL,
+       caption = "#TidyTuesday\ngraph by wjtorres") +
+  my_theme
+
+# print plot on my screen device
+myplot
+
+# print plot on my PNG device
+ggsave(
+  filename = "My TidyTuesday Plot.png",
+  device = "png",
+  dpi = 300)
+
+# turn off if no longer needed
+showtext_auto(FALSE)
+```
+
