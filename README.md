@@ -70,6 +70,10 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 <details>
   <summary>2018 codes and plots</summary>
 
+### 2018-04-09 | Week 2 | NFL Salary
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2018_04_09/myplot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2018_04_09) 
+
 ### 2018-04-02 | Week 1 | US Tuition Costs
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2018_04_02/My%20TidyTuesday%20Plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2018_04_02) 
