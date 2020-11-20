@@ -1,0 +1,145 @@
+---
+title: "TidyTuesday - Global Mortality"
+author: "wjtorres"
+date: '2020-11-20'
+output:
+  html_document
+---
+
+# TidyTuesday, 2018-04-09
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(gt) # to generate table
+library(paletteer) # for table colors
+library(scales)
+library(extrafont) # for table fonts
+loadfonts(device = "win", quiet = TRUE) # # Register fonts for Windows bitmap output
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2018-04-16")
+
+```
+
+# Pull Data
+
+```{r Glimpse}
+
+global_mortality <- tt$global_mortality
+
+```
+
+# Wrangle
+
+```{r}
+
+honduras <- global_mortality %>%
+  select(-country_code) %>% # remove column
+  pivot_longer(cols = ("Cardiovascular diseases (%)":"Terrorism (%)"), # pivot to longer
+               names_to = "type",
+               values_to = "percentage") %>%
+  filter(country == "Honduras", year == 1990 | year == 2016 ) %>% # first argument is about which country, second argument is about which year (1990 or 2016)
+  select(-country) %>% # no longer need country column; to prepare for table
+  mutate(type = gsub(pattern = "[[:punct:]]", type, replacement = "")) %>% # replace all punctuation (e.g., % and parentheses) with a space; to prepare for table
+  pivot_wider(names_from = year, # pivot wider so that table has a 1990 year and a 2016 year
+              values_from = percentage) %>%
+  mutate(change = `2016` - `1990`) %>% # create a new change variable; positive value means that mortality rate has increased; negative values mean that mortality rate has decreased 
+  arrange(change) # arrange by change, ascending
+
+```
+
+# Table
+
+```{r}
+my_table <- honduras %>%
+  gt() %>%
+  
+  # add table and subtitle
+  tab_header(title = md("**Change in Honduras Mortality Rates**"))  %>%
+  
+  # add source note
+  tab_source_note(source_note = md("**Source**: #TidyTuesday | **Table by:** wjtorres")) %>%
+  
+  # modify tab options
+  tab_options(source_notes.font.size = 14) %>%
+
+  # rename columns
+  cols_label(type = "Type",
+             change = "Change") %>% 
+  
+  # align columns
+  cols_align("center") %>%
+  
+  # format percent
+  fmt_number(columns = vars("1990", "2016", "change"), # specify columns to format
+              decimals = 2, # specify number of decimals
+              pattern = "{x}%") %>% # add a percentage symbol to each cell in specified columns
+
+  # use color
+  data_color(columns = vars("change"), # specify column that will have color
+             colors = scales::col_numeric( # variables need to be numeric, color scheme will be a gradient
+               palette = paletteer::paletteer_d( #use the paletteer package to grab the victory bonds palette from the nord package
+                 palette = "nord::victory_bonds"
+                 ) %>% as.character(),
+               domain = NULL,
+               reverse = TRUE # needed to reverse the palette because in this case negative values in change column represent a positive change towards lower mortality
+               )
+             ) %>%
+  
+  # use tab styles to modify more targeted table parts  (https://gt.rstudio.com/reference/index.html#section-create-or-modify-parts)
+  tab_style( 
+    style = list(
+      cell_fill(color = "#FFFFFF"),
+      cell_text(color = "#0073CF", size = 30, font = "Noto Sans", weight = "bold")),
+    locations = cells_title(groups = "title") # modify title
+    ) %>%
+  
+  tab_style(
+    style = list(
+      cell_fill(color = "#FFFFFF"),
+      cell_text(color = "#0073CF", size = 20, font = "Noto Serif", weight = "bold")),
+    locations = cells_column_labels( # modify certain column labels
+      columns = vars("type", "1990", "2016", "change")
+    )) %>%
+  
+  tab_style(
+    style = list(
+      cell_fill(color = "#0073CF"),
+      cell_text(color = "#FFFFFF", size = 14, font = "Noto Serif")),
+    locations = cells_body( # modify certain cells
+      columns = vars("type", "1990", "2016")
+    )) %>%
+  
+  tab_style(
+    style = list(
+      cell_text(color = "#FFFFFF", size = 14, font = "Noto Serif")),
+    locations = cells_body( # modify certain cells
+      columns = vars("change")
+    ))
+
+```
+
+# Save table as html
+```{r}
+# my_table %>%
+#   gtsave(
+#     "tab_1.html", inline_css = TRUE
+#   )
+```
+
+# save table as png
+```{r}
+# my_table %>%
+#   gtsave(
+#     "tab_1.png", expand = 10
+#   )
+```
+
