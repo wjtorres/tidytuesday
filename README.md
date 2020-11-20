@@ -70,6 +70,10 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 <details>
   <summary>2018 codes and plots</summary>
 
+### 2018-04-16 | Week 3 | Global Mortality Rates
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2018_04_16/tab_1.png)](https://github.com/wjtorres/tidytuesday/tree/master/2018_04_16) 
+
 ### 2018-04-09 | Week 2 | NFL Salary
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2018_04_09/myplot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2018_04_09) 
