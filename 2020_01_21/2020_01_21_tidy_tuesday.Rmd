@@ -129,7 +129,7 @@ my_plot <- songs_r %>%
   # specify labs
   labs(
     title = "Spotify: 2019 Track Popularity",
-    x = "Track Popularity (1 - 100)",
+    x = "Track Popularity (0 - 100)",
     y = "Number of Tracks",
     caption = "Data Source: #TidyTuesday | Graph: wjtorres"
   ) +
