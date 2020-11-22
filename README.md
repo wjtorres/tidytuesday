@@ -63,7 +63,11 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 ### 2020-08-11 | Week 33 | Avatar
 
-[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_08_11/2020_08_11_files/figure-html/Visualize-1.png)](https://github.com/wjtorres/tidytuesday/tree/master/2020_08_11) 
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_08_11/2020_08_11_files/figure-html/Visualize-1.png)](https://github.com/wjtorres/tidytuesday/tree/master/2020_08_11)
+
+### 2020-01-21 | Week 4 | Song Genres
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_01_21/my_plot.JPG)](https://github.com/wjtorres/tidytuesday/tree/master/2020_01_21) 
 
 </details>
 
