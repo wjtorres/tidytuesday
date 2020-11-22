@@ -1,0 +1,147 @@
+---
+title: "TidyTemplate - Song Genres"
+author: "wjtorres"
+date: '2020-11-21'
+output: 
+  html_document
+---
+
+# TidyTuesday | 2020-01-21
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(psych)
+library(showtext) # to use Gotham fonts I downloaded
+
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2020-01-21")
+
+```
+
+# Pull Data
+
+```{r Glimpse}
+
+songs <- tt$spotify_songs
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+songs_r <- songs %>%
+  filter(track_album_release_date >= as.Date("2019-01-01") & track_album_release_date <= ("2019-12-31")) %>%
+  select(track_name, track_artist, track_album_release_date, track_popularity) %>%
+  distinct()
+
+```
+
+# Visualize
+
+```{r fig.showtext = TRUE}
+
+# load fonts used in plot (showtext package)
+font_add(family = "Gotham Bold", regular = "C:/Users/jacki/AppData/Local/Microsoft/Windows/Fonts/Gotham-Bold.otf")
+font_add(family = "Gotham Thin", regular = "C:/Users/jacki/AppData/Local/Microsoft/Windows/Fonts/Gotham-Thin.otf")
+
+# show that I want to use showtext to render text
+showtext_auto()
+
+# save my colors
+black <- "#191414"
+green <- "#1DB954"
+white <- "#FFFFFF"
+
+# create my custom theme
+my_theme <-  theme(
+    plot.title = element_text(family = "Gotham Bold", size = 30, hjust = .5, color = green, face = "bold"),
+    axis.text = element_text(family = "Gotham Thin", size = 12, color = black),
+    axis.title = element_text(family = "Gotham Thin", size = 12, color = black, face = "bold"),
+    plot.caption = element_text(family = "Gotham Thin", size = 10, color = black),
+    plot.background = element_rect(fill = white),
+    panel.background = element_rect(fill = white))
+
+# create my plot
+my_plot <- songs_r %>%
+  ggplot(aes(
+    x = track_popularity,
+    fill = cut(track_popularity, 100))) +
+
+  # add a histogram
+  geom_histogram(
+    fill = green, # specify fill color
+    color = black, # specify outline color
+    size = 1.5, # specify outline thickness
+    show.legend = FALSE) +
+
+    # add a vertical line at the mean
+  geom_vline(
+    xintercept = describe(songs_r)["track_popularity", "mean"], # use describe function; uses the track_popularity row to pull the value from the mean column
+    linetype = "solid",
+    color = "greenyellow",
+    size = 4
+  ) +
+  
+  # annotate mean popularity value
+  annotate(
+    "text",
+    x = describe(songs_r)["track_popularity", "mean"] + 7,
+    y = 650,
+    label = paste("M =", round(describe(songs_r)["track_popularity", "mean"], 0)),
+    angle = 0,
+    color = green,
+    size = 5
+    ) +
+  
+ # annotate most popular song with text
+  annotate(
+    "text",
+    x = 93,
+    y = 300,
+    color = green,
+    size = 5,
+    label = "'Dance Monkey' \nby Tones and I",
+  ) +
+  
+  # annotate most popular song with arrow
+  annotate(
+    geom = "curve", 
+    x = 97, 
+    y = 220, 
+    xend = 100,
+    yend = 20, 
+    curvature = "-.2",
+    arrow = arrow(length = unit(2, "mm")),
+    size = 2,
+    color = "greenyellow") +
+  
+  # specify labs
+  labs(
+    title = "Spotify: 2019 Track Popularity",
+    x = "Track Popularity (1 - 100)",
+    y = "Number of Tracks",
+    caption = "Data Source: #TidyTuesday | Graph: wjtorres"
+  ) +
+  
+  # use my theme
+  my_theme
+
+# print my plot
+my_plot
+
+# turn off when no longer needed
+showtext_auto(FALSE)
+  
+```
+
