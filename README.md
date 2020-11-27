@@ -4,6 +4,11 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 <details>
   <summary>2020 codes and plots</summary>
+ 
+ ### 2020-11-24 | Week 48 | Washington Trails
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_11_24/app_pic.png)](https://github.com/wjtorres/tidytuesday/tree/master/2020_11_24)
+Shiny app url link: https://wjtorres.shinyapps.io/WashingtonTrails/
 
 ### 2020-11-17 | Week 47 | #BlackInDataWeek
 
