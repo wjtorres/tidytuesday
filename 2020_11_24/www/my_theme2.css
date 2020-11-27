@@ -1,0 +1,43 @@
+h1 {
+	font-size:60px;
+	font-family: 'Fredericka the Great', cursive;
+	color: #157241;
+}
+
+h2 {
+	font-size:25px;
+	font-family: 'Annie Use Your Telescope', cursive;
+}
+
+h4 {
+	font-size:25px;
+	font-family: 'Annie Use Your Telescope', cursive;
+}
+
+
+body {
+	background-color: #82FF96;
+}
+
+.btn {
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-family: 'Annie Use Your Telescope', cursive;
+	font-size: 25px;
+	border-radius: 4px;
+	background-color: #F56E64;
+	width: 100%;
+}
+
+.btn:hover {
+	background-color: #F56E64;
+	color: white;
+}
+
+.well {
+	background-color: #EFEFEF;
+}
