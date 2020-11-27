@@ -4,6 +4,7 @@ library(tidyverse)
 library(gt)
 library(showtext)
 library(tidytuesdayR)
+library(here)
 
 # Use a fluid layout
 fluidPage(theme = "my_theme2.css",

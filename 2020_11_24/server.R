@@ -1,8 +1,6 @@
 # Prep data
 
-tt <- tt_load("2020-11-24")
-
-trails <- tt$hike_data
+trails <- readr::read_rds(here::here("hike_data.rds"))
 
 trails$rating[trails$rating == 0] <- NA
 
