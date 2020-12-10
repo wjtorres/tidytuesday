@@ -4,15 +4,19 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 ## Most recent plot
 
+### 2020-12-08 | Week 50 | Women of 2020
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_12_08/my_gif.gif)](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_08)
+
+<details>
+  <summary>2020 codes and plots</summary>
+
 ### 2020-12-01 | Week 49 | Toronto Shelters
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_12_01/myapp.gif)](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_01)
 
 Shiny app url link: https://wjtorres.shinyapps.io/TorontoShelters/
 
-<details>
-  <summary>2020 codes and plots</summary>
- 
 ### 2020-11-24 | Week 48 | Washington Trails
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_11_24/app_pic.png)](https://github.com/wjtorres/tidytuesday/tree/master/2020_11_24)
