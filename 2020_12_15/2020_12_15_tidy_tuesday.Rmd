@@ -1,0 +1,198 @@
+---
+title: "TidyTemplate"
+author: wjtorres
+date: 2020-12-15
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(showtext) # for adding google fonts
+library(ragg) # for agg_png function; draw to a PNG file
+library(ggimage) # for geom_image function; adding image to plot
+library(here) # for drop-in replacement for 'file.path()'
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2020-12-15")
+
+```
+# Pull Data
+
+```{r Glimpse}
+
+ninja <- tt$ninja_warrior
+
+```
+
+# Wrangle
+
+```{r}
+
+# add a row for Season 4 so that there is not a blank space in final plot (Season 4 did not have an obstacle that only appeared once)
+new_row <- tribble(
+  ~season, ~location, ~round_stage, ~ obstacle_name, ~obstacle_order,
+   4,       "",        "",          "---",           NA
+)
+ninja_r <- rbind(ninja, new_row)
+
+# prep a df for the final plot
+ninja_r <- ninja_r %>%
+  
+  # identify obstacles that have only appeared once
+  arrange(obstacle_name) %>%
+  group_by(obstacle_name) %>%
+  mutate(n = n()) %>%
+  filter(n == 1) %>%
+  ungroup() %>%
+  
+  # create a numeric variable to represent the x-axis
+  mutate(position = 
+           case_when(
+             season == 1 | season == 6 ~ 10, 
+             season == 2 | season == 7 ~ 25,
+             season == 3 | season == 8 ~ 40,
+             season == 4 | season == 9 ~ 55,
+             season == 5 | season == 10 ~ 70)) %>%
+  
+  # create a new season2 variable with a cleaner name for the final plot
+  mutate(season2 = paste("SEASON", season, sep = " ")) %>%
+  
+  group_by(season) %>%
+  
+  # create index for obstacles in seasons 1 to 5, which will be in top row
+  mutate(index1 = -0.001:-n()) %>%
+  
+  # create index for obstacles in seasons 6 to 10, which will be in bottom row
+  mutate(index2 = index1-10) %>%
+  
+  # arrange so that can call for specific row names for index needed for season 1 to 5; season 1 to 6
+  arrange(obstacle_name) %>%
+  arrange(season)
+
+# create a new df that only holds the names of the seasons for the final plot
+categories <- ninja_r %>%
+  distinct_at(vars(season, position, season2)) %>%
+  arrange(season) #arrange so that can call by row in plot code
+
+```
+
+```{r Prep Images}
+
+# create a df to add star image
+star <- tribble(
+  ~position, ~index,
+  9, 1.3,
+  9, -8.7,
+  24, 1.3,
+  24, -8.7,
+  39, 1.3,
+  39, -8.7,
+  54, 1.3,
+  54, -8.7,
+  69, 1.3,
+  69, -8.7
+)
+
+star$image <- here::here("star.png")
+
+# create a df to add ninja image
+ninja_character <- tribble(
+  ~position, ~index,
+  17, -21.5,
+)
+
+ninja_character$image <- here::here("ninja.png")
+
+```
+
+
+```{r Visualize}
+
+# add google fonts
+font_add_google("Fugaz One", "fugaz")
+font_add_google("Inter", "inter")
+
+# turn on showtext for font
+# showtext_auto()
+
+bck_color <- "#072ac8"
+
+my_plot <- ninja_r %>%
+  ggplot(aes()) +
+  
+  # obstacle names (from season 1 to 5)
+    geom_text(data = ninja_r[1:22, ], aes(x = position, y = index1, label = obstacle_name, color = as.factor(season2)), hjust = 0, size = 10, family = "inter") +
+  
+  # obstacle names (from season 6 to 10)
+    geom_text(data = ninja_r[23:54, ], aes(x = position, y = index2, label = obstacle_name, color = as.factor(season2)), hjust = 0, size = 10, family = "inter") +
+  
+  # season name (season 1 to 5)
+  geom_text(data = categories[1:5, ], aes(x = position, y = 1, label = as.factor(season2), group = as.factor(season2)), size = 16, hjust = 0, family = "inter", fontface = "bold", color = "#00003f") +
+  
+  # season name (season 1 to 5)
+  geom_text(data = categories[6:10, ], aes(x = position, y = -9, label = as.factor(season2), group = as.factor(season2)), size = 16, hjust = 0, family = "inter", fontface = "bold", color = "#00003f") +
+  
+  # add star image
+  geom_image(data = star, aes(x = position, y = index, image = image), size = 0.03) +
+  
+  # add ninja image
+  geom_image(data = ninja_character, aes(x = position, y = index, image = image), size = .23) +
+  
+  # scales
+  scale_y_continuous(limits = c(-25,2), expand = c(0,0)) +
+  scale_x_continuous(limits = c(5,85), expand = c(0,0)) +
+  
+    scale_color_manual(values = c(
+    "SEASON 1" = "#fcfcfc",
+    "SEASON 2" = "#fcfcfc",
+    "SEASON 3" = "#fcfcfc",
+    "SEASON 4" = "#fcfcfc",
+    "SEASON 5" = "#fcfcfc",
+    "SEASON 6" = "#fcfcfc",
+    "SEASON 7" = "#fcfcfc",
+    "SEASON 8" = "#fcfcfc",
+    "SEASON 9" = "#fcfcfc",
+    "SEASON 10" = "#fcfcfc")
+
+    ) +
+
+  # guides and themes
+    guides(color = FALSE) + # suppress legends
+    labs(title = "AMERICAN NINJA WARRIOR",
+         subtitle = "THE 53 OBSTACLES THAT HAVE APPEARED ONLY ONCE THROUGH TEN SEASONS",
+         caption = "Visualization: wjtorres \nData: #TidyTuesday & Data.World") +
+    theme_void() +
+    theme(plot.background = element_rect(fill = bck_color, color = NA),
+          panel.background = element_rect(fill = bck_color, color = NA),
+          panel.grid = element_blank(),
+          plot.caption = element_text(family = "inter", size = 24, color = "#fcfcfc", margin = margin(0,20,20,0)),
+          plot.title = element_text(family = "fugaz", size = 140, hjust = 0.5, color = "#ff0000", margin = margin(90, 0, 0, 0)),
+          plot.subtitle = element_text(family = "inter", size = 48, hjust = 0.5, color = "#fcfcfc", margin = margin(0, 0, 30, 0))
+
+          )
+ 
+my_plot
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 28, height = 28, units = "in", res = 300))
+
+dev.off()
+
+
+```
