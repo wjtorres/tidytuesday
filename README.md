@@ -93,6 +93,15 @@ Shiny app url link: https://wjtorres.shinyapps.io/WashingtonTrails/
 </details>
 
 <details>
+  <summary>2019 codes and plots</summary>
+ 
+ ### 2019-02-19 | Week 8 | PhDs Awarded by Field
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2019_02_19/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2019_02_19) 
+ 
+ </details>
+
+<details>
   <summary>2018 codes and plots</summary>
 
 ### 2018-04-16 | Week 3 | Global Mortality Rates
