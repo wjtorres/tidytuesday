@@ -1,0 +1,214 @@
+---
+title: "TidyTemplate"
+date: 2020-12-18
+output: html_output
+---
+
+# TidyTuesday, 2019-02-19
+
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(ggstream)
+library(extrafont) # for cyberpunk; had to directly install aldrich font
+library(showtext)
+library(directlabels)
+library(ggCyberPunk)
+
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+```
+
+# Load the weekly Data
+
+
+```{r Load}
+
+phd_field <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-02-19/phd_by_field.csv")
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+broad_field <- phd_field %>%
+  group_by(broad_field, year) %>%
+  summarise(n_phds = sum(n_phds, na.rm = TRUE))
+
+psych <- phd_field %>%
+  filter(broad_field == "Psychology and social sciences") %>%
+  filter(major_field == "Psychology") %>%
+  filter(major_field != "Social sciences") %>%
+  filter(!is.na(n_phds)) %>%
+  select(field, year, n_phds)
+
+io <- phd_field %>%
+  filter(broad_field == "Psychology and social sciences") %>%
+  filter(major_field == "Psychology") %>%
+  filter(major_field != "Social sciences") %>%
+  filter(!is.na(n_phds)) %>%
+  filter(field == "Industrial and organizational psychology") %>%
+  select(field, year, n_phds)
+
+psych_six <- phd_field %>%
+  filter(broad_field == "Psychology and social sciences") %>%
+  filter(major_field == "Psychology") %>%
+  filter(major_field != "Social sciences") %>%
+  filter(!is.na(n_phds)) %>%
+  filter(field %in% c("Clinical psychology", "Cognitive psychology and psycholinguistics", "Counseling","Experimental psychology", "Human development and family studies", "Industrial and organizational psychology" )) %>%
+  select(field, year, n_phds)
+
+```
+
+
+# Visualize
+
+Using your processed dataset, create your unique visualization.
+
+```{r Visualize}
+
+# save my colors
+darkgrey <- "#2F4F4F"
+white <- "#FFFFFF"
+grey <- "#DCDCDC"
+
+# add font
+font_add_google(name = "Lato", family = "lato")
+
+
+my_theme <-  theme(
+    # title
+    plot.title = element_text(family = "lato", size = 5, hjust = 0, color = darkgrey),
+    
+    # axis
+    axis.text = element_text(family = "lato", size = 3, color = darkgrey),
+    axis.title = element_text(family = "lato", size = 3, color = darkgrey),
+    
+    # plot background
+    plot.background = element_rect(fill = white),
+    panel.background = element_rect(fill = white),
+    
+    # panel grid
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),
+    
+    # legend
+    legend.position = "none"
+    
+    )
+
+broad_field %>%
+  ggplot(aes(year, n_phds, fill = broad_field)) +
+  
+  # geom
+  geom_stream() +
+  geom_stream_label(aes(label = broad_field)) +
+  
+  # axis
+  scale_x_continuous(breaks = seq(2008, 2017, 1)) +
+  
+  #labs
+  labs(title = "PhDs Awarded",
+       x = "Year",
+       y = "Number of PhDs") +
+
+  # my theme
+  my_theme
+```
+
+```{rsources direct labels package}
+# source: https://stackoverflow.com/questions/29357612/plot-labels-at-ends-of-lines
+# source: https://www.rdocumentation.org/packages/directlabels/versions/2020.6.17/topics/geom_dl
+```
+
+```{r plotting first and last with adjustments does not work}
+p <- psych_six %>%
+  ggplot(aes(x = year, y = n_phds, group = field, color = field)) +
+  
+  # points
+  geom_point() +
+  
+  # line
+  geom_line() +
+  
+  # axis
+  scale_x_continuous(expand = c(0, 2.5), breaks = seq(2008, 2017, 1)) +
+  
+  #legend
+  theme(legend.position = "none") +
+  
+  # direct labels
+  geom_dl(aes(label = field), method = list(dl.trans(x = x - 0.2), "first.points", cex = 0.8))
+
+p <- p + geom_dl(aes(label = field), method = list(dl.trans(x = x + 0.2), "last.qp", cex = 0.8))
+
+p
+
+
+
+
+# direct.label(p, list(cex = 20, "first.qp"))
+# direct.label(p, list(cex = 20, "first.qp", "last.qp"))
+
+```
+
+
+```{r practicing with direct labels package}
+
+# add font using showtext (used by cyberpunk package; I wasn't able to use extrafont to download font)
+font_add(family = "Aldrich", regular = "C:/Users/jacki/AppData/Local/Microsoft/Windows/Fonts/Aldrich-regular.ttf")
+
+psych_six %>%
+  ggplot(aes(x = year, y = n_phds, group = field, color = field)) +
+  
+  # points
+  geom_point() +
+  
+  # line
+  geom_line() +
+  
+  # direct labels
+  geom_dl(aes(label = field), method = list(dl.combine("first.points", "last.points")), cex = 0.8) +
+
+  
+  # axis
+  scale_x_continuous(expand = c(0, 2.5), breaks = seq(2008, 2017, 1)) +
+  
+  
+  # labs
+  labs(title = "PhDs Awarded in Psych Fields",
+       x = "Year",
+       y = "Number of PhDs") +
+    
+  # cyberpunk theme
+   geom_glowing_line() +
+   theme_cyberpunk() +
+   scale_color_cyberpunk() +
+  
+  # legend
+  theme(legend.position = "none")
+  
+
+  
+```
+
+
+# Save Image
+
+Save your image for sharing. Be sure to use the `#TidyTuesday` hashtag in your post on twitter! 
+
+```{r}
+
+# This will save your most recent plot
+ggsave(
+  filename = "My TidyTuesday Plot.png",
+  device = "png")
+
+```
