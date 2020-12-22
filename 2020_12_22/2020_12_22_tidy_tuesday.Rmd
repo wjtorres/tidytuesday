@@ -182,9 +182,9 @@ my_plot <- ggplot() +
   
   scale_color_manual(values = c(red, green, brown)) +
 
-  geom_label(data= usa_2000, aes(x= year, y = end, label = scales::dollar(round(avg_local_price,2)), hjust = .5), family = "two", size = 2, color = brown, fill = white, nudge_y = 0.2) +
+  geom_label(data= usa_2000, aes(x= year, y = end, label = scales::dollar(round(avg_local_price,2)), hjust = .5), family = "two", size = 2, color = brown, fill = tan, nudge_y = 0.2) +
   
-  geom_label(data= usa_2020, aes(x= year, y = end, label = scales::dollar(round(avg_local_price,2)), hjust = .5), family = "two", size = 2, color = brown, fill = white, nudge_y = 0.5) +
+  geom_label(data= usa_2020, aes(x= year, y = end, label = scales::dollar(round(avg_local_price,2)), hjust = .5), family = "two", size = 2, color = brown, fill = tan, nudge_y = 0.5) +
 
   
   # modify axis
