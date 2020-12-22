@@ -1,0 +1,212 @@
+---
+title: "TidyTemplate"
+date: 2020-12-21
+author: wjtorres
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(showtext) # for adding google font
+library(ragg) # for agg_png function; draw to a PNG file
+
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2020-12-22")
+
+```
+
+
+# Pull Data
+
+```{r Readme, eval = interactive()}
+
+mac <- tt$'big-mac'
+
+```
+
+# Wrangle
+
+```{r}
+
+# prep a usa df with price changes
+usa <- mac %>%
+  filter(iso_a3 == "USA") %>%
+  select(date, iso_a3, local_price) %>%
+  mutate(
+    year = format(date, "%Y")) %>%
+  group_by(year) %>%
+  mutate(avg_local_price = mean(local_price)) %>%
+  ungroup() %>%
+  select(-date, -local_price) %>%
+  distinct() %>%
+  arrange(year) %>%
+  mutate(
+    id = row_number(),
+    start = lag(avg_local_price),
+    end = avg_local_price,
+    amount = avg_local_price - lag(avg_local_price),
+    change_type = case_when(
+      amount > 0 ~ "increase",
+      amount == 0 ~ "no change",
+      amount < 0 ~ "decrease"
+    )) %>% # calculate difference between values in consecutive order
+  relocate(id)
+
+# prep a usa df with initial price in 2000 only
+usa_2000 <- usa %>%
+  filter(year == 2000)
+
+# prep a usa df with price change in 2009 only (this is year that saw no change so will need to fix in plot so that there's a line shown)
+usa_2009 <- usa %>%
+  filter(year == 2009)
+
+# prep a usa df with final price in 2020 only
+usa_2020 <- usa %>%
+  filter(year == "2020")
+```
+
+
+# Visualize
+
+```{r}
+
+# add font
+font_add_google(name = "Bree Serif", family = "one")
+font_add_google(name = "Open Sans", family = "two")
+
+# my theme
+
+# save my colors
+red <- "#ae4b45"
+brown <- "#52362a"
+yellow <- "#c59b49"
+tan <- "#d4cebe"
+grey <- "#DCDCDC"
+green <- "#81965e"
+
+# create my custom theme
+my_theme <-  theme(
+    # title
+    plot.title = element_text(family = "one", size = 18, hjust = .5, color = brown, margin = margin(10, 0, 0, 0)),
+    
+    # subtitle
+    plot.subtitle = element_text(family = "two", size = 14, hjust = .5, color = brown ),
+    
+    # caption
+    plot.caption = element_text(family = "two", size = 6, hjust = .5, color = brown),
+    
+    # axis
+    axis.text = element_text(family = "two", size = 8, color = brown),
+    axis.title = element_text(family = "two", size = 8, color = brown),
+    axis.title.y = element_text(margin = margin(t = 0, r = 5, b = 0, l = 0)),
+    axis.title.y.right = element_text(margin = margin(t = 0, r = 0, b = 0, l = 5)),
+    
+    # plot background
+    plot.background = element_rect(fill = tan),
+    panel.background = element_rect(fill = tan),
+    
+    # panel grid
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_line( size = .1, linetype = "solid", color = grey),
+    panel.grid.minor.y = element_blank(),
+    
+    # legend
+    legend.position = "none"
+    )
+  
+# create plot
+my_plot <- ggplot() +
+  
+  # add waterfall rectangles
+  geom_rect(data = usa,
+            aes(
+              x = year,
+              fill = change_type,
+              xmin = id - .45,
+              xmax = id + .45,
+              ymin = end,
+              ymax = start
+            )) + # note that this removes missing row for 2000 data since technically no start
+  
+    scale_fill_manual(values = c(red, green, brown)) +
+  
+  # add initial 2000 price, rectangle
+  geom_rect(data = usa_2000,
+            aes(
+              x = year,
+              xmin = id - .45,
+              xmax = id + .45,
+              ymin = 0,
+              ymax = avg_local_price
+            ), 
+            fill = yellow) +
+  
+  # add a straight line to indicate no change for 2009; otherwise it is left blank
+  geom_segment(data = usa_2009,
+               aes(
+                 x = id - .45,
+                 xend = id + .45,
+                 y = start,
+                 yend = end
+               ), 
+               color = brown) +
+  
+  # add final 2020 price, rectangle
+  geom_rect(data = usa_2020,
+            aes(
+              x = year,
+              xmin = id - .45,
+              xmax = id + .45,
+              ymin = 0,
+              ymax = start
+            ),
+            fill = yellow) +
+  
+  # add geom label
+  geom_text(data= usa, aes(x= year, y = end, label = scales::dollar(round(amount,2)), family = "two", color = change_type, hjust = .5), size = 2, nudge_y = 0.2) +
+  
+  scale_color_manual(values = c(red, green, brown)) +
+
+  geom_label(data= usa_2000, aes(x= year, y = end, label = scales::dollar(round(avg_local_price,2)), hjust = .5), family = "two", size = 2, color = brown, fill = white, nudge_y = 0.2) +
+  
+  geom_label(data= usa_2020, aes(x= year, y = end, label = scales::dollar(round(avg_local_price,2)), hjust = .5), family = "two", size = 2, color = brown, fill = white, nudge_y = 0.5) +
+
+  
+  # modify axis
+  scale_y_continuous(breaks=seq(0, 6.5, by = 1), limits = c(0, 6.5), labels=scales::dollar_format(), sec.axis = dup_axis()) +
+  
+  # labs
+  labs(title = "Big Mac Price Changes",
+       subtitle = "In the US, the average price of a Big Mac has increased by 127%, \nfrom $2.51 in 2000 to $5.69 in 2020.",
+       x = "Year",
+       y = "Average Price in US Dollars",
+       caption = "Visualization: wjtorres | Data: The Economist") +
+  
+  # modify theme
+  my_theme
+
+my_plot
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 9, height = 5, units = "in", res = 300))
+
+dev.off()
+
+```
