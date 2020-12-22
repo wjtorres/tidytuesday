@@ -4,12 +4,16 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 ## Most recent plot
 
-### 2020-12-15 | Week 51 | Ninja Warrior
+### 2020-12-22 | Week 52 | Big Mac Index
 
-[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_12_15/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_15)
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_12_22/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_22)
 
 <details>
   <summary>2020 codes and plots</summary>
+ 
+### 2020-12-15 | Week 51 | Ninja Warrior
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_12_15/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_15)
 
 ### 2020-12-08 | Week 50 | Women of 2020
 
