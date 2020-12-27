@@ -2,22 +2,22 @@
  
 These are my contributions to the [#TidyTuesday](https://github.com/rfordatascience/tidytuesday) challenge organized by the [R4DS online learning community](https://twitter.com/r4dscommunity).
 
-## Most recent plot
+## Most recent plots
 
-### 2020-12-22 | Week 52 | Big Mac Index | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_22)
+### 2020-12-22 | Week 52 | Big Mac Index :hamburger: | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_22)
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_12_22/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_22)
 
-<details>
-  <summary>2020 codes and plots</summary>
- 
-### 2020-12-15 | Week 51 | Ninja Warrior | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_15)
+### 2020-12-15 | Week 51 | Ninja Warrior :runner: | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_15)
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_12_15/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_15)
 
-### 2020-12-08 | Week 50 | Women of 2020 | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_08)
+### 2020-12-08 | Week 50 | Women of 2020 :clap: | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_08)
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_12_08/my_gif.gif)](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_08)
+
+<details>
+  <summary>2020 codes and plots</summary>
 
 ### 2020-12-01 | Week 49 | Toronto Shelters | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_01)
 
