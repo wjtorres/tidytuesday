@@ -99,6 +99,10 @@ Shiny app url link: https://wjtorres.shinyapps.io/WashingtonTrails/
 <details>
   <summary>2019 codes and plots</summary>
  
+  ### 2019-05-14 | Week 20 | Nobel Prize Winners :trophy: | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2019_05_14)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2019_05_14/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2019_05_14)
+ 
  ### 2019-02-19 | Week 8 | PhDs Awarded by Field | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2019_02_19)
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2019_02_19/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2019_02_19) 
