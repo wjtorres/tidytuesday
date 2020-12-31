@@ -1,0 +1,214 @@
+---
+title: "TidyTemplate"
+date: 2020-12-28
+author: wjtorres
+output: html_output
+---
+
+# TidyTuesday, week of 2019-05-14
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(forcats)
+library(psych) # for mean line
+library(showtext) # for adding google fonts
+library(ragg) # for agg_png function; draw to a PNG file
+library(ggtext) # for font color in subtitle
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2019-05-14")
+
+```
+
+
+# Save the weekly data
+
+```{r}
+winners <- tt$nobel_winners
+```
+
+
+# Wrangle
+
+```{r Wrangle}
+
+my_df <- winners %>%
+  separate(birth_date,sep = "-", into = c("birth_year", "birth_month", "birth_day"), remove = FALSE) %>%
+  relocate(birth_date, .before = "birth_year") %>%
+  mutate(age_won = prize_year - as.numeric(birth_year)) %>%
+  filter(!is.na(age_won)) %>% # removes 31 cases missing age_won variable
+  mutate(category_f = factor(category, levels = c("Physics", "Medicine", "Chemistry", "Peace","Literature", "Economics")))
+
+```
+
+# Visualization
+
+```{r}
+
+# df with age won means by category
+
+means <- my_df %>%
+  group_by(category_f) %>%
+  summarize(mean = mean(age_won))
+
+# add fonts
+font_add_google(name = "Bree Serif", family = "one")
+font_add_google(name = "Open Sans", family = "two")
+
+# save my colors
+white <- "#FFFFFF"
+black <- "#181819"
+
+# create locations in the facet for text
+physics_text <- data.frame(
+  age_won = 10, 
+  count = 12,
+  category_f = factor("Physics", levels = c("Physics", "Medicine", "Chemistry", "Peace","Literature", "Economics"))
+  )
+
+med_text <- data.frame(
+  age_won = 10, 
+  count = 12,
+  category_f = factor("Medicine", levels = c("Physics", "Medicine", "Chemistry", "Peace","Literature", "Economics"))
+  )
+
+chem_text <- data.frame(
+  age_won = 10, 
+  count = 12,
+  category_f = factor("Chemistry", levels = c("Physics", "Medicine", "Chemistry", "Peace","Literature", "Economics"))
+  )
+
+peace_text <- data.frame(
+  age_won = 10, 
+  count = 12,
+  category_f = factor("Peace", levels = c("Physics", "Medicine", "Chemistry", "Peace","Literature", "Economics"))
+  )
+
+lit_text <- data.frame(
+  age_won = 10, 
+  count = 12,
+  category_f = factor("Literature", levels = c("Physics", "Medicine", "Chemistry", "Peace","Literature", "Economics"))
+  )
+
+economics_text <- data.frame(
+  age_won = 10, 
+  count = 12,
+  category_f = factor("Economics", levels = c("Physics", "Medicine", "Chemistry", "Peace","Literature", "Economics"))
+  )
+
+# create my custom theme
+my_theme <-  theme(
+    # title
+    plot.title = element_text(family = "one", size = 18, hjust = 0, color = black, margin = margin(10, 0, 10, 0)),
+
+    # subtitle
+    plot.subtitle = element_markdown(family = "two", size = 14, hjust = 0, color = black, margin = margin(10, 0, 10, 0)),
+
+    # caption
+    plot.caption = element_text(family = "two", size = 12, hjust = 0, color = black, margin = margin(10, 0, 0, 0)),
+
+    # axis
+    axis.text = element_text(family = "two", size = 12, color = black),
+    axis.title = element_text(family = "two", size = 12, color = black),
+    
+    # strip background
+    strip.text.x = element_text(color = white),
+    strip.background = element_rect(color = white, fill = white),
+    
+    # plot background
+    plot.background = element_rect(fill = white),
+    panel.background = element_rect(color = black, fill = white, size = 1),
+
+    # panel grid
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank()
+    )
+
+# create plot
+
+my_plot <- my_df %>%
+  ggplot(aes(x = age_won, group = category_f)) +
+  geom_bar(fill = "#8caba8") +
+
+  # scales
+  scale_x_continuous(breaks=seq(10,100,5)) +
+  
+  # facet wrap
+  facet_wrap(vars(category_f), ncol = 1) +
+
+  # add a vertical line at the overall mean
+  geom_vline(
+    data = my_df,
+    aes(xintercept = describe(my_df)["age_won", "mean"]),
+    linetype = "solid",
+    size = 3,
+    color = black
+  ) +
+  
+  # add a vertical line at the means for each category
+  geom_vline(
+    data = means,
+    aes(xintercept = mean),
+    linetype = "solid",
+    size = 3,
+    color = "#008080"
+    ) +
+  
+  # add category text labels
+  geom_text(data = physics_text, aes(x = age_won, y = count), label = "Physics",
+            size = 5, color = black, family = "two", hjust = 0) +
+  
+  # add category text labels
+  geom_text(data = med_text, aes(x = age_won, y = count), label = "Medicine",
+            size = 5, color = black, family = "two", hjust = 0) +
+  
+  # add category text labels
+  geom_text(data = chem_text, aes(x = age_won, y = count), label = "Chemistry",
+            size = 5, color = black, family = "two", hjust = 0) +
+  
+  # add category text labels
+  geom_text(data = peace_text, aes(x = age_won, y = count), label = "Peace",
+            size = 5, color = black, family = "two", hjust = 0) +
+  
+  # add category text labels
+  geom_text(data = lit_text, aes(x = age_won, y = count), label = "Literature",
+            size = 5, color = black, family = "two", hjust = 0) +
+  
+  # add category text labels
+  geom_text(data = economics_text, aes(x = age_won, y = count), label = "Economics",
+            size = 5, color = black, family = "two", hjust = 0) +
+  
+  # labs
+  labs(title = "Nobel Prize Winners",
+       subtitle = "<span style = 'color: #008080;'><b>Average age of winners by category</b></span> vs.
+       <span style = 'color: #181819;'><b>average age of winners across all categories</b></span>",
+       x = "Winner's Age",
+       y = "Count of Winners",
+       caption = "Visualization: wjtorres | Data: Kaggle") +
+  
+  # use my theme
+  my_theme
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 9, height = 12, units = "in", res = 300))
+
+dev.off()
+
+```
