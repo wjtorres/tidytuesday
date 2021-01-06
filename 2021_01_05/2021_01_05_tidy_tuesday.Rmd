@@ -1,0 +1,280 @@
+---
+title: "TidyTemplate"
+author: wjtorres
+date: 2021-01-05
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(countrycode) # to get country names
+library(psych)
+library(plotly) # to save ggplot as interactive plot
+library(htmlwidgets) # to save widget
+library(glue)
+library(scales)
+library(ggtext) # for font color in subtitle
+library(showtext) # for adding google fonts
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-01-05")
+
+```
+
+
+# Pull Data
+
+```{r}
+transit <- tt$transit_cost
+```
+
+
+# Wrangle
+
+```{r Wrangle}
+
+# df clean up
+transit2 <- transit %>%
+  
+  # remove rows at the bottom that are not data
+  filter(!is.na(e)) %>%
+  
+  # update real_cost to numeric
+  mutate(real_cost_n = as.numeric(real_cost)) %>%
+  
+  # create a country name variable by using the countrycode package; join using ecb column
+  mutate(country_name = countrycode::countrycode(country, origin = "ecb", destination = "country.name.en")) %>%
+  
+  # the UK values were not matched using countrycode package so will need to manually correct
+  mutate(country_name = case_when(
+    country == "UK" ~ "United Kingdom", 
+    TRUE ~ .$country_name # this is similar to ELSE
+  )) %>%
+  
+  # move new country name variable to after original country variable
+  relocate(country_name, .after = country)
+
+
+# save length and cost medians
+psych::describe(transit2)
+median_cost <- median(transit2$real_cost_n)
+median_length <- median(transit2$length)
+
+
+# further df clean up
+transit3 <- transit2 %>%
+  mutate(
+    quadrant = case_when(
+      length >= median_length & real_cost_n >= median_cost ~ 1,
+      length < median_length & real_cost_n >= median_cost ~ 2,
+      length < median_length & real_cost_n < median_cost ~ 3,
+      length >= median_length & real_cost_n < median_cost ~ 4),
+    real_cost_comma = format(real_cost_n, big.mark = ",", digits = 0),
+    Description = glue("The project {line} ({start_year}-{end_year}) is located in {city}, {country_name}. \nIt is {length} kms in length and costs {real_cost_comma} (in millions of USD).")
+    )
+  
+# how many projects are in each quadrant type?
+transit3 %>%
+  count(quadrant)
+
+```
+
+
+# Visualize
+
+```{r Visualize}
+
+# my colors
+magenta <- "#EE3377"
+l_magenta <- "#ffe1e7"
+orange <- "#EE7733"
+l_orange <- "#fce4d6"
+blue <- "#0077BB"
+l_blue <- "#cfedff"
+teal <- "#009988"
+l_teal <- "#e7fffc"
+grey <- "#8a8787"
+
+# add font
+font_add_google(name = "Bree Serif", family = "one")
+font_add_google(name = "Open Sans", family = "two")
+
+# my theme
+my_theme <- theme(
+  
+  # title
+  plot.title = element_markdown(family = "one", size = 18, hjust = 0, color = grey,),
+  
+  # axis
+  axis.title = element_text(family = "two", size = 10, color = grey),
+
+  axis.text = element_text(family = "two", size = 10, color = grey),
+  
+  # panel background
+  panel.background = element_blank(),
+  
+  # legend
+  legend.position = "none",
+  )
+
+p <- transit3 %>%
+  ggplot(aes(x = length, y = real_cost_n, color = as.factor(quadrant), label = Description)) +
+  
+   # add geom_rect for diff color quadrants
+  geom_rect(
+    xmin = median_length,
+    xmax = 210,
+    ymin = median_cost,
+    ymax = 95000,
+    alpha = .2,
+    fill = l_magenta,
+    color = l_magenta
+  ) +
+  
+  geom_rect(
+    xmin = -20,
+    xmax = median_length,
+    ymin = median_cost,
+    ymax = 95000,
+    alpha = .2,
+    fill = l_orange,
+    color = l_orange
+  ) +
+  
+  geom_rect(
+    xmin = -20,
+    xmax = median_length,
+    ymin = -15000,
+    ymax = median_cost,
+    alpha = .2,
+    fill = l_blue,
+    color = l_blue
+  ) +
+  
+  geom_rect(
+    xmin = median_length,
+    xmax = 210,
+    ymin = -15000,
+    ymax = median_cost,
+    alpha = .2,
+    fill = l_teal,
+    color = l_teal
+  ) +
+  
+  # add scatterplot
+  geom_point(shape = "diamond", alpha = .3, size = 3) +
+    
+  # add median length vertical line
+  geom_segment(
+    x = median_length,
+    y = -15000,
+    xend = median_length,
+    yend = 95000,
+    size = .5,
+    linetype = "dashed",
+    colour = grey,) +
+  
+  # add median cost horizontal line
+  geom_segment(
+    x = -20,
+    y = median_cost,
+    xend = 210,
+    yend = median_cost,
+    size = .5,
+    linetype = "dashed",
+    colour = grey,) +
+  
+  # add median text
+  geom_text(aes(x = -18, y = 4000), 
+            hjust = 0, 
+            size = 3,
+            family = "two",
+            color = grey,
+            label = "median") +
+
+  geom_text(aes(x = 17, y = -14000), 
+            hjust = 0, 
+            size = 3, 
+            family = "two",
+            color = grey,
+            label = "median") +
+  
+  # add quadrant text
+  geom_text(aes(x = 40, y = 40000), 
+            hjust = 0,
+            label = "231 PROJECTS\nlonger and more costly",
+            size = 3, 
+            family = "two",
+            color = magenta) +
+  
+  geom_text(aes(x = -18, y = 40000), 
+            hjust = 0,
+            label = "38 PROJECTS\nshorter but more costly",
+            size = 3,
+            family = "two",
+            color = orange) +
+  
+  geom_text(aes(x = -18, y = -10000), 
+            hjust = 0,
+            label = "230 PROJECTS\nshorter and less costly",
+            size = 3,
+            family = "two",
+            color = blue) +
+  
+  geom_text(aes(x = 40, y = -10000), 
+            hjust = 0,
+            label = "38 PROJECTS\nlonger but less costly",
+            size = 3,
+            family = "two",
+            color = teal) +
+  
+  # scales
+  scale_color_manual(values = c(magenta, orange, blue, teal)) +
+  
+  scale_y_continuous(label = dollar_format(), limits = c(-15000, 95000), breaks=seq(0,95000,25000)) +
+  
+  scale_x_continuous(limits = c(-20, 210)) +
+  
+  # labs
+  labs(
+    title = "Compare the length and cost of <b>537 TRANSIT PROJECTS</b> around the world",
+    x = "length (km)",
+    y = "cost (in millions USD)") +
+  
+  # use my theme
+  my_theme
+
+# print plot
+p
+
+# print as htlml object
+ggplotly(p, tooltip = c("Description")) %>%
+  style(textposition = "right")
+
+
+#save plot as html object
+
+p <- ggplotly(p, tooltip = c("Description")) %>%
+  style(textposition = "right")
+
+# save file locally
+# saveWidget(p, file="my_plotly.html")
+
+
+  
+```
