@@ -213,7 +213,7 @@ title_2010s <- data.frame(
 
 ```{r Visualize}
 
-# add fonts
+# add google fonts
 font_add_google(name = "Lustria", family = "one")
 font_add_google(name = "Open Sans", family = "two")
 
