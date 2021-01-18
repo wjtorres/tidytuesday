@@ -4,6 +4,10 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 ## Most recent plots
 
+### 2021-01-12 | Week 3 | Art Collection | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_12)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_01_12/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_12)
+
 ### 2021-01-05 | Week 2 | Transit Cost Project | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_05)
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_01_05/my_gif.gif)](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_05)
