@@ -98,7 +98,7 @@ lilac <- "#B65FCF"
 my_theme <- theme(
   
   # title
-  plot.title = element_text(family = "one", size = 20, hjust = .5, color = d_grey, margin = margin(10, 0, 0, 0)),
+  plot.title = element_text(family = "one", size = 20, hjust = .5, color = d_grey, margin = margin(10, 0, 10, 0)),
   
   # subtitle
   plot.subtitle = element_text(family = "one", size = 14, hjust = .5, color = d_grey, margin = margin(0, 0, 10, 0)),
@@ -132,7 +132,7 @@ my_plot <- crops2 %>%
 
   # labs
   labs(title = "Crop growth in Kenya by type and county",
-       subtitle = "For each crop, the numbers represent the percentage of households in the county \nthat grow the crop (from data available).",
+       subtitle = "For each crop, the numbers represent the percentage of households in the county \ngrowing the crop (based on data available from the 2019 Kenya Population and Housing Census).",
        caption = "Design: Jackie Torres | Data Source: rKenyaCensus by Shelmith Kariuki | #TidyTuesday 2021W4",
        x = NULL,
        y = NULL) +
@@ -140,12 +140,11 @@ my_plot <- crops2 %>%
   # use my theme
   my_theme
 
-
-my_plot
-# save image, 9 X 7 worked; 10 x 10 worked
+# save image
 ggsave("my_plot.png",
        plot = my_plot,
        device = agg_png(width = 10, height = 10, units = "in", res = 300))
+
 dev.off()
 
 ```
