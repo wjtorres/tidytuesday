@@ -1,0 +1,151 @@
+---
+title: "TidyTemplate"
+author: Jackie Torres
+date: 2021-01-19
+output: html_output
+---
+
+# TidyTuesday
+
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(stringr) # to capitalize counties
+library(forcats) # for factoring county categories
+library(showtext) # for adding google font
+library(ragg) # for agg_png function; draw to a PNG file
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-01-19")
+
+```
+
+
+# Readme
+
+```{r Readme, eval = interactive()}
+
+tt
+
+```
+
+
+# Pull Data
+
+```{r Glimpse}
+
+crops <- tt$crops
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+crops2 <- crops %>%
+  
+  # remove Kenya
+  filter(SubCounty != "KENYA") %>%
+  
+  #pivot to long format
+  pivot_longer(cols = Farming:`Khat (Miraa)`, names_to = "crop" ) %>%
+  
+  # replace missing values with zero
+  mutate(value = replace_na(value, 0)) %>%
+  
+  # group by crop and find percentage of each crops grown at the SubCounty
+  group_by(crop) %>%
+  mutate(percentage = value/sum(value) * 100) %>%
+  ungroup()
+
+# capitalize first letter only
+crops2$SubCounty <- stringr::str_to_title(crops2$SubCounty)
+
+# arrange descending (important for order of appearance)
+crops2 <- crops2 %>%
+  arrange(desc(SubCounty))
+```
+
+
+# Visualize
+
+```{r Visualize}
+
+# add google fonts
+font_add_google(name = "Lustria", family = "one")
+
+# save my colors
+l_grey <- "#a6a6a6"
+d_grey <- "#222222"
+white <- "#FFFFFF"
+lilac <- "#B65FCF"
+
+# customize theme
+my_theme <- theme(
+  
+  # title
+  plot.title = element_text(family = "one", size = 20, hjust = .5, color = d_grey, margin = margin(10, 0, 0, 0)),
+  
+  # subtitle
+  plot.subtitle = element_text(family = "one", size = 14, hjust = .5, color = d_grey, margin = margin(0, 0, 10, 0)),
+  
+  # caption
+  plot.caption = element_text(family = "one", size = 10, hjust = .5, color = l_grey, margin = margin(10, 0, 10, 0)),
+  
+  # axis
+  axis.text = element_text(family = "one", size = 10, color = d_grey),
+  axis.title = element_text(family = "one", size = 10, color = d_grey),
+  axis.ticks = element_blank(),
+  
+  # plot background
+  panel.background = element_blank(),
+  plot.background = element_rect(fill = "#FFFFFF")
+)
+
+# create plot
+my_plot <- crops2 %>%
+  ggplot(aes(x = crop, fct_inorder(SubCounty))) +
+  
+  # add heat map
+  geom_tile(aes(fill = percentage), width = 0.7, height = 0.7, color = l_grey) +
+  
+  # add text
+  geom_text(aes(family = "one", label = (round(percentage, 0))), size = 3) +
+  
+  # scales
+  scale_x_discrete(position = "top") +
+  scale_fill_gradient(low = white, high = lilac, guide = FALSE) +
+
+  # labs
+  labs(title = "Crop growth in Kenya by type and county",
+       subtitle = "For each crop, the numbers represent the percentage of households in the county \nthat grow the crop (from data available).",
+       caption = "Design: Jackie Torres | Data Source: rKenyaCensus by Shelmith Kariuki | #TidyTuesday 2021W4",
+       x = NULL,
+       y = NULL) +
+  
+  # use my theme
+  my_theme
+
+
+my_plot
+# save image, 9 X 7 worked; 10 x 10 worked
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 10, height = 10, units = "in", res = 300))
+dev.off()
+
+```
