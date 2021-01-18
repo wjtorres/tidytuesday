@@ -4,27 +4,30 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 ## Most recent plots
 
+### 2021-01-19 | Week 4 | Kenya Census | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_19)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_01_19/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_19)
+
 ### 2021-01-12 | Week 3 | Art Collection | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_12)
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_01_12/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_12)
 
-### 2021-01-05 | Week 2 | Transit Cost Project | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_05)
-
-[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_01_05/my_gif.gif)](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_05)
-
-### 2020-12-22 | Week 52 | Big Mac Index :hamburger: | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_22)
-
-[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_12_22/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_22)
 
 <details>
   <summary>2021 codes and plots</summary>
  
- 
+ ### 2021-01-05 | Week 2 | Transit Cost Project | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_05)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_01_05/my_gif.gif)](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_05)
 </details>
 
 
 <details>
   <summary>2020 codes and plots</summary>
+
+### 2020-12-22 | Week 52 | Big Mac Index :hamburger: | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_22)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2020_12_22/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_22)
 
 ### 2020-12-15 | Week 51 | Ninja Warrior :runner: | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2020_12_15)
 
