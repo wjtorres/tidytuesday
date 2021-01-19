@@ -70,10 +70,10 @@ crops2 <- crops %>%
 # add percentage groups
 crops2 <- crops2 %>%
   mutate(percentage_group = case_when(
-    percentage > 0 & percentage <= 5 ~ "less than 5%",
-    percentage > 5 & percentage <= 10 ~ "between 5 to 10%",
-    percentage > 10 & percentage <= 20 ~ "between 10 and 20%",
-    percentage > 20 ~ "more than 20%"
+    percentage > 0 & percentage <= 5 ~ "<5%",
+    percentage > 5 & percentage <= 10 ~ "5-10%",
+    percentage > 10 & percentage <= 20 ~ "10-20%",
+    percentage > 20 ~ ">20%"
     )
   )
 
@@ -114,6 +114,15 @@ my_theme <- theme(
   # caption
   plot.caption = element_text(family = "one", size = 10, hjust = .5, color = m_grey, margin = margin(15, 0, 10, 0)),
   
+  
+  # legend
+  legend.position = "bottom",
+  legend.title = element_text(family = "one", size = 10, color = d_grey),
+  legend.text = element_text(family = "one", size = 10, color = d_grey),
+  legend.background = element_rect(fill = "#d4dddd"),
+  legend.key = element_rect(fill = "#d4dddd", color = NA),
+  legend.key.width = unit(0.5,"cm"),
+  
   # axis
   axis.text = element_text(family = "one", face = "bold", size = 10, color = d_grey),
   axis.ticks = element_blank(),
@@ -139,14 +148,15 @@ my_plot <- crops2 %>%
   
   # scales
   scale_x_discrete(position = "top") +
-  scale_fill_manual(values = c("#efe8d1", "#e8dfbe", "#e2d5ab", "#dbcc98"), guide = FALSE) +
+  scale_fill_manual(values = c("#ece0b6", "#e3d297", "#d7be69", "#cbaa3b"), breaks = c("<5%","5-10%","10-20%",">20%")) +
 
   # labs
   labs(title = "Crop Growth in Kenya by Type and County",
        subtitle = "For each crop, the numbers represent the percentage of households in the county \ngrowing the crop from data available in the 2019 Kenya Population and Housing Census. \nIf data are not available, blanks are used.",
        caption = "Design: Jackie Torres | Data Source: rKenyaCensus by Shelmith Kariuki | #TidyTuesday 2021W4",
        x = NULL,
-       y = NULL) +
+       y = NULL,
+       fill = NULL) +
   
   # use my theme
   my_theme
