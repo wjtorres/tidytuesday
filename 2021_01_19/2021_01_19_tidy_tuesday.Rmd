@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(tidytuesdayR)
 library(stringr) # to capitalize counties
-library(forcats) # for factoring county categories
+library(forcats) # for factoring
 library(showtext) # for adding google font
 library(ragg) # for agg_png function; draw to a PNG file
 
@@ -67,6 +67,19 @@ crops2 <- crops %>%
   mutate(percentage = value/sum(value, na.rm = T) * 100) %>%
   ungroup()
 
+# add percentage groups
+crops2 <- crops2 %>%
+  mutate(percentage_group = case_when(
+    percentage > 0 & percentage <= 5 ~ "less than 5%",
+    percentage > 5 & percentage <= 10 ~ "between 5 to 10%",
+    percentage > 10 & percentage <= 20 ~ "between 10 and 20%",
+    percentage > 20 ~ "more than 20%"
+    )
+  )
+
+# factor reorder the percentage_group
+crops2$percentage_group <- fct_reorder(crops2$percentage_group, crops2$percentage, min)
+
 # capitalize first letter only
 crops2$SubCounty <- stringr::str_to_title(crops2$SubCounty)
 
@@ -86,11 +99,8 @@ font_add_google(name = "Nunito", family = "two")
 
 
 # save my colors
-l_grey <- "#a6a6a6"
+m_grey <- "#7a7a7a"
 d_grey <- "#222222"
-white <- "#FFFFFF"
-l_lilac <- "#fbf6fc"
-lilac <- "#af50ca"
 
 # customize theme
 my_theme <- theme(
@@ -102,16 +112,19 @@ my_theme <- theme(
   plot.subtitle = element_text(family = "one", size = 14, hjust = .5, color = d_grey, margin = margin(0, 0, 15, 0)),
   
   # caption
-  plot.caption = element_text(family = "one", size = 10, hjust = .5, color = l_grey, margin = margin(15, 0, 10, 0)),
+  plot.caption = element_text(family = "one", size = 10, hjust = .5, color = m_grey, margin = margin(15, 0, 10, 0)),
   
   # axis
-  axis.text = element_text(family = "one", size = 10, color = d_grey),
-  axis.title = element_text(family = "one", size = 10, color = d_grey),
+  axis.text = element_text(family = "one", face = "bold", size = 10, color = d_grey),
   axis.ticks = element_blank(),
   
+  # panels
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  
   # plot background
-  panel.background = element_blank(),
-  plot.background = element_rect(fill = "#FFFFFF")
+  panel.background = element_rect(fill = "#d4dddd", color = "#d4dddd"),
+  plot.background = element_rect(fill = "#d4dddd")
 )
 
 # create plot
@@ -119,18 +132,18 @@ my_plot <- crops2 %>%
   ggplot(aes(x = crop, fct_inorder(SubCounty))) +
   
   # add heat map
-  geom_tile(aes(fill = percentage), width = 0.7, height = 0.7, color = l_grey) +
+  geom_tile(aes(fill = percentage_group), width = 0.8, height = 0.8) +
   
   # add labels
   geom_text(aes(family = "one", label = (round(percentage, 1))), size = 3) +
   
   # scales
   scale_x_discrete(position = "top") +
-  scale_fill_gradient(low = l_lilac, high = lilac, na.value = 'white', guide = FALSE) +
+  scale_fill_manual(values = c("#efe8d1", "#e8dfbe", "#e2d5ab", "#dbcc98"), guide = FALSE) +
 
   # labs
-  labs(title = "2019 Census: Crop Growth in Kenya by Type and County",
-       subtitle = "For each crop, the numbers represent the percentage of households in the county \ngrowing the crop from data available. If data are not available, white blanks are used.",
+  labs(title = "Crop Growth in Kenya by Type and County",
+       subtitle = "For each crop, the numbers represent the percentage of households in the county \ngrowing the crop from data available in the 2019 Kenya Population and Housing Census. \nIf data are not available, blanks are used.",
        caption = "Design: Jackie Torres | Data Source: rKenyaCensus by Shelmith Kariuki | #TidyTuesday 2021W4",
        x = NULL,
        y = NULL) +
