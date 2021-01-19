@@ -90,7 +90,7 @@ l_grey <- "#a6a6a6"
 d_grey <- "#222222"
 white <- "#FFFFFF"
 l_lilac <- "#fbf6fc"
-lilac <- "#B65FCF"
+lilac <- "#af50ca"
 
 # customize theme
 my_theme <- theme(
@@ -122,7 +122,7 @@ my_plot <- crops2 %>%
   geom_tile(aes(fill = percentage), width = 0.7, height = 0.7, color = l_grey) +
   
   # add labels
-  geom_text(aes(family = "two", label = (round(percentage, 1))), size = 3) +
+  geom_text(aes(family = "one", label = (round(percentage, 1))), size = 3) +
   
   # scales
   scale_x_discrete(position = "top") +
@@ -130,7 +130,7 @@ my_plot <- crops2 %>%
 
   # labs
   labs(title = "2019 Census: Crop Growth in Kenya by Type and County",
-       subtitle = "For each crop, the numbers represent the percentage of households in the county \ngrowing the crop. If data are not available, white blanks are used.",
+       subtitle = "For each crop, the numbers represent the percentage of households in the county \ngrowing the crop from data available. If data are not available, white blanks are used.",
        caption = "Design: Jackie Torres | Data Source: rKenyaCensus by Shelmith Kariuki | #TidyTuesday 2021W4",
        x = NULL,
        y = NULL) +
