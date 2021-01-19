@@ -22,8 +22,6 @@ library(ragg) # for agg_png function; draw to a PNG file
 # open showtext
 showtext_opts(dpi = 300)
 showtext_auto(enable = TRUE)
-
-
 ```
 
 # Load the weekly Data
@@ -64,12 +62,9 @@ crops2 <- crops %>%
   #pivot to long format
   pivot_longer(cols = Farming:`Khat (Miraa)`, names_to = "crop" ) %>%
   
-  # replace missing values with zero
-  mutate(value = replace_na(value, 0)) %>%
-  
   # group by crop and find percentage of each crops grown at the SubCounty
   group_by(crop) %>%
-  mutate(percentage = value/sum(value) * 100) %>%
+  mutate(percentage = value/sum(value, na.rm = T) * 100) %>%
   ungroup()
 
 # capitalize first letter only
@@ -87,24 +82,27 @@ crops2 <- crops2 %>%
 
 # add google fonts
 font_add_google(name = "Lustria", family = "one")
+font_add_google(name = "Nunito", family = "two")
+
 
 # save my colors
 l_grey <- "#a6a6a6"
 d_grey <- "#222222"
 white <- "#FFFFFF"
+l_lilac <- "#fbf6fc"
 lilac <- "#B65FCF"
 
 # customize theme
 my_theme <- theme(
   
   # title
-  plot.title = element_text(family = "one", size = 20, hjust = .5, color = d_grey, margin = margin(10, 0, 10, 0)),
+  plot.title = element_text(family = "one", size = 20, hjust = .5, color = d_grey, margin = margin(10, 0, 15, 0)),
   
   # subtitle
-  plot.subtitle = element_text(family = "one", size = 14, hjust = .5, color = d_grey, margin = margin(0, 0, 10, 0)),
+  plot.subtitle = element_text(family = "one", size = 14, hjust = .5, color = d_grey, margin = margin(0, 0, 15, 0)),
   
   # caption
-  plot.caption = element_text(family = "one", size = 10, hjust = .5, color = l_grey, margin = margin(10, 0, 10, 0)),
+  plot.caption = element_text(family = "one", size = 10, hjust = .5, color = l_grey, margin = margin(15, 0, 10, 0)),
   
   # axis
   axis.text = element_text(family = "one", size = 10, color = d_grey),
@@ -123,16 +121,16 @@ my_plot <- crops2 %>%
   # add heat map
   geom_tile(aes(fill = percentage), width = 0.7, height = 0.7, color = l_grey) +
   
-  # add text
-  geom_text(aes(family = "one", label = (round(percentage, 0))), size = 3) +
+  # add labels
+  geom_text(aes(family = "two", label = (round(percentage, 1))), size = 3) +
   
   # scales
   scale_x_discrete(position = "top") +
-  scale_fill_gradient(low = white, high = lilac, guide = FALSE) +
+  scale_fill_gradient(low = l_lilac, high = lilac, na.value = 'white', guide = FALSE) +
 
   # labs
-  labs(title = "Crop growth in Kenya by type and county",
-       subtitle = "For each crop, the numbers represent the percentage of households in the county \ngrowing the crop (based on data available from the 2019 Kenya Population and Housing Census).",
+  labs(title = "2019 Census: Crop Growth in Kenya by Type and County",
+       subtitle = "For each crop, the numbers represent the percentage of households in the county \ngrowing the crop. If data are not available, white blanks are used.",
        caption = "Design: Jackie Torres | Data Source: rKenyaCensus by Shelmith Kariuki | #TidyTuesday 2021W4",
        x = NULL,
        y = NULL) +
