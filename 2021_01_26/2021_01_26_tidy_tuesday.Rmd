@@ -124,7 +124,7 @@ my_plot <- volunteers %>%
   # labels
   labs(
     title = "Break Free from Plastic: Number of Brand Audit Volunteers from 2019 to 2020",
-    subtitle = "Volunteers from around the world have performed brand audits to document \nplastic waste found in cleanup events. During a brand audit, volunteers categorize and count branded plastic packages. \nTheir efforts aide in identifying the world's top plastic polluters.",
+    subtitle = "Volunteers from around the world have performed brand audits to document plastic waste found in cleanup events.\nDuring a brand audit, volunteers categorize and count branded plastic packages. \nTheir efforts aide in identifying the world's top plastic polluters.",
     x = NULL,
     y = NULL,
     caption = "design: Jackie Torres | data source:  Break Free from Plastic courtesy of Sarah Sauve | #TidyTuesday 2021W5"
