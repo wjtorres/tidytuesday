@@ -1,0 +1,145 @@
+---
+title: "TidyTemplate"
+date: 2021-01-25
+author: wjtorres
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(forcats)
+
+library(showtext) # for adding google font
+library(ragg) # for agg_png function; draw to a PNG file
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-01-26")
+
+```
+# Pull Data
+
+```{r Pull data}
+
+plastics <- tt$plastics
+
+```
+
+# Wrangle
+
+```{r}
+
+volunteers <- plastics %>%
+  select(country, year, num_events, volunteers) %>%
+  distinct() %>%
+  group_by(country) %>%
+  
+  # only keep countries with 2019 and 2020 volunteer data
+  filter(n() > 1) %>%
+  
+  # compute change in number of volunteers
+  arrange(year) %>%
+  group_by(country) %>%
+  mutate(change = last(volunteers) - first(volunteers)) %>%
+  
+  # arrange in descending number of volunteers
+  arrange(desc(change))
+
+# replace "United States of America" with "USA"
+volunteers$country[which(volunteers$country == "United States of America")] = "USA"
+
+# factor country based on order of appearance (which is based on arrange of change above)
+volunteers$country = fct_inorder(volunteers$country)
+
+```
+
+# Visualize
+
+```{r}
+
+# add google fonts
+font_add_google(name = "Merriweather", family = "one")
+font_add_google(name = "Nanum Gothic", family = "two")
+
+# save my colors
+l_grey <- "#484848"
+d_grey <- "#222222"
+platinum <- "#EBEBEB"
+purple <- "#52489C"
+
+my_theme <- theme(
+  
+  # title
+  plot.title = element_text(family = "one", size = 14, hjust = .5, color = d_grey, margin = margin(10, 0, 0, 0)),
+  
+  # subtitle
+  plot.subtitle = element_text(family = "two", size = 10, hjust = .5, color = d_grey, margin = margin(0, 0, 10, 0)),
+  
+  # caption
+  plot.caption = element_text(family = "two", size = 8, hjust = .5, color = l_grey, margin = margin(20, 0, 0, 0)),
+  
+  # legend
+  legend.position = "none",
+
+  # axis
+  axis.text = element_blank(),
+  axis.ticks = element_blank(),
+  
+  # strip background
+  strip.background = element_blank(),
+  strip.text.x = element_text(family = "two", size = 8, color = l_grey),
+  
+  # plot background
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  plot.background = element_rect(fill = platinum)
+)
+
+# my plot
+my_plot <- volunteers %>%
+  ggplot(aes(x = as.factor(year), y = volunteers, group = country)) +
+  geom_line(color = purple) +
+  geom_point(aes(size = volunteers), color = purple) +
+  geom_text(aes(label = volunteers), vjust = 0, hjust = .5, nudge_y = 1700, size = 2, color = l_grey, family = "two") +
+  
+  # scales
+  scale_y_continuous(limits = c(0, 9500)) +
+  
+  # facet wrap
+  facet_wrap(~country) +
+  
+  # labels
+  labs(
+    title = "Break Free from Plastic: Number of Brand Audit Volunteers from 2019 to 2020",
+    subtitle = "Volunteers from around the world have performed brand audits to document \nplastic waste found in cleanup events. During a brand audit, volunteers categorize and count branded plastic packages. \nTheir efforts aide in identifying the world's top plastic polluters.",
+    x = NULL,
+    y = NULL,
+    caption = "design: Jackie Torres | data source:  Break Free from Plastic courtesy of Sarah Sauve | #TidyTuesday 2021W5"
+  ) +
+  
+  # use my theme
+  my_theme
+
+my_plot
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 9, height = 8, units = "in", res = 300))
+
+dev.off()
+
+```
