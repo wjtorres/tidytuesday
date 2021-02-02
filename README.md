@@ -4,6 +4,10 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 ## Most recent plots
 
+### 2021-02-02 | Week 6 | HBCU Enrollment | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_02)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_02_02/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_02)
+
 ### 2021-01-26 | Week 5 | Plastic Pollution | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_26)
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_01_26/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_26)
