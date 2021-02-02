@@ -1,0 +1,140 @@
+---
+title: "TidyTemplate"
+date: 2021-02-02
+author: wjtorres
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(janitor)
+library(gghighlight)
+
+library(showtext) # for adding google font
+library(ragg) # for agg_png function; draw to a PNG file
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-02-02")
+
+```
+
+
+# Readme
+
+```{r Readme, eval = interactive()}
+
+mydata <- tt$hbcu_all
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+# clean variable names; select start year; convert enrollment to thousands
+mydata2 <- mydata %>%
+  clean_names() %>%
+  filter(year >= 2000) %>%
+  select(year, total_enrollment) %>%
+  mutate(total_enrollment_thousands = total_enrollment/1000)
+
+# obtain the value for when enrollment was at its max
+maxEnrollment <- max(mydata2$total_enrollment_thousands)
+
+# create a new variable to indicate that max enrollment should be highlighted in ggplot
+mydata2 <- mydata2 %>%
+  mutate(toHighlight = if_else(total_enrollment_thousands == maxEnrollment, "yes", "no" ))
+
+
+```
+
+# Visualize
+
+```{r Visualize}
+
+# add google fonts
+font_add_google(name = "Merriweather", family = "one")
+font_add_google(name = "Nanum Gothic", family = "two")
+
+# my colors
+d_grey <- "#383838"
+grey <- "#C0C0C0"
+blue <- "#189ad3"
+white <- "#f9fafc"
+
+# my theme
+my_theme <- theme(
+  
+   # title
+  plot.title = element_text(family = "one", size = 14, hjust = 0, color = d_grey, margin = margin(10, 0, 0, 0)),
+  
+  # subtitle
+  plot.subtitle = element_text(family = "two", size = 10, hjust = 0, color = d_grey, margin = margin(0, 0, 10, 0)),
+  
+  # caption
+  plot.caption = element_text(family = "two", size = 8, hjust = 0, color = grey, margin = margin(10, 0, 0, 0)),
+  
+  # panel background
+  plot.background = element_rect(fill = white),
+  panel.background = element_rect(fill = white),
+  
+  # remove grid
+  panel.grid.major = element_blank(), 
+  panel.grid.minor = element_blank(),
+  
+  # remove y axis text and ticks
+  axis.text.y = element_blank(),
+  axis.ticks.y = element_blank(),
+  axis.ticks.x = element_blank(),
+ )
+
+# my plot
+
+my_plot <- mydata2 %>%
+  
+  ggplot(aes(x = year, y = total_enrollment_thousands, fill = toHighlight)) +
+  
+  # add bar plot
+  geom_bar(stat = "identity") +
+  
+  # add text
+  geom_text(aes(label = round(total_enrollment_thousands, digits = 0)), size = 3, color = white, vjust = 0, hjust = .5, nudge_y = -15, family = "two") +
+  
+  # scales
+  scale_fill_manual(values = c( "yes" = blue, "no" = grey), guide = FALSE ) +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_x_continuous(breaks = seq(2000, 2015, 1), expand = c(0, 0)) +
+  
+  # labs
+  labs(title = "HBCU Total Enrollment (in thousands)",
+       subtitle = "From 2000 to 2015, fall enrollment in historically Black colleges and universities (HBCU)\nwas at its highest in 2010",
+       caption = "Design: Jackie Torres | Source: Data.World | #TidyTuesday 2021W6",
+       x = NULL,
+       y = NULL) +
+  
+  # my theme
+  my_theme
+  
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 7, height = 5, units = "in", res = 300))
+
+dev.off()
+  
+```
