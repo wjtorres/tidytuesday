@@ -1,0 +1,163 @@
+---
+title: "TidyTemplate"
+author: Jackie Torres
+date: 2021-02-16
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(ragg)
+library(glue)
+library(showtext)
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-02-16")
+
+```
+
+# Pull Data
+
+```{r}
+
+my_data <- tt$freed_slaves
+
+```
+
+# Wrangle Data
+
+```{r}
+
+# create a df for text labels
+labels <- my_data %>%
+  mutate(Position = Slave) %>%
+  mutate(Position = case_when(
+    Year == 1870 ~ 89,
+    TRUE ~ .$Position
+  ))
+
+```
+
+
+# Visualize
+
+```{r Visualize}
+
+# my fonts
+font_add_google(name = "PT Sans Narrow", family = "one")
+font_add_google(name = "Staatliches", family = "two")
+font_add_google(name = "Londrina Solid", family = "three")
+
+# my colors
+tan <- "#eae6e2"
+green <- "#55976d"
+black <- "#181a19"
+
+# my theme
+my_theme <- theme(
+  
+  # title
+  plot.title = element_text(family = "one", size = 12, hjust = .5, margin = margin(5, 0, 10, 0)),
+  
+  # subtitle
+  plot.subtitle = element_text(family = "one", size = 8, hjust = .5, margin = margin(10, 0, 30, 0)),
+  
+  # caption
+  plot.caption = element_text(family = "one", size = 8, hjust = .5, margin = margin(10, 0, 10, 0)),
+
+  # plot and panel background
+  plot.background = element_rect(fill = tan),
+  panel.background = element_rect(fill = green),
+  
+  # plot margin
+  plot.margin = unit(c(0, .2, 0, .2), "in"),
+  
+  # remove grid
+  panel.grid.major = element_blank(), 
+  panel.grid.minor = element_blank(),
+  
+  # axis
+  axis.text.x = element_text(family = "two", size = 14, color = black),
+  
+  # remove axis text and ticks
+  axis.text.y = element_blank(),
+  axis.ticks = element_blank(),
+  axis.ticks.length = unit(0, "lines"),
+  )
+
+# my plot
+
+my_plot <- my_data %>%
+  ggplot(aes(x = Year, y = Slave)) +
+  
+  # add a line
+  geom_line() +
+  
+  # fill in area underneath the line
+  geom_area(fill = black) +
+  
+  # add segment lines
+  geom_segment(aes(x = Year,
+                   xend = Year,
+                   y = 100,
+                   yend = Free),
+               color = black,
+               size = .1) +
+  
+  # add labels
+  geom_text(data = labels, 
+            aes(
+              x = Year,
+              y = Position,
+              label = glue('{Free}%')
+              ),
+            nudge_y = 1.25,
+            size = 4,
+            family = "two"
+            ) +
+  
+  # add annotations
+  annotate("text", x = 1830, y = 95, label = "FREE - LIBRE", family = "two", color = black, size = 7) +
+  annotate("text", x = 1830, y = 55, label = "SLAVES", family = "two", color = tan, size = 7) +
+  annotate("text", x = 1830, y = 50, label = "ESCLAVES", family = "two", color = tan, size = 7) +
+  
+  # scales
+  scale_y_continuous(expand = c(0,0)) +
+  scale_x_continuous(expand = c(0,0), breaks = seq(1790, 1870, 10), position = "top") +
+  expand_limits(y = c(0, 100)) +
+  
+  # allow text outside borders
+  coord_cartesian(clip = "off") +
+  
+  # labs
+  labs(
+    title = "PROPORTION OF FREEMEN AND SLAVES AMONG AMERICAN NEGROES .\n\nPROPORTION DES NÈGRES LIBRES ET DES ESCLAVES EN AMÈRIQUE .",
+    subtitle = "DONE BY ATLANTA UNIVERSITY .",
+    x = NULL,
+    y = NULL,
+    caption = "#DuBoisChallenge chart by: Jackie Torres | #TidyTuesday 2021W8") +
+  
+  # use my theme
+  my_theme
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 6, height = 8, units = "in", res = 300))
+  
+```
