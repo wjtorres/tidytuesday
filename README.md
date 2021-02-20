@@ -4,6 +4,10 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 ## Most recent plots
 
+### 2021-02-16 | Week 8 | W.E.B. Du Bois Challenge | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_16)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_02_16/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_16)
+
 ### 2021-02-09 | Week 7 | Wealth and Income | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_09)
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_02_09/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_09)
@@ -12,15 +16,15 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_02_02/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_02)
 
-### 2021-01-26 | Week 5 | Plastic Pollution | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_26)
-
-[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_01_26/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_26)
-
 
 <details>
   <summary>2021 codes and plots</summary>
  
- ### 2021-01-19 | Week 4 | Kenya Census | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_19)
+### 2021-01-26 | Week 5 | Plastic Pollution | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_26)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_01_26/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_26)
+
+### 2021-01-19 | Week 4 | Kenya Census | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_19)
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_01_19/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_01_19)
  
