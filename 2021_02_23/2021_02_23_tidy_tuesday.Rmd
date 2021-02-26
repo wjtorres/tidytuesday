@@ -88,13 +88,13 @@ green <- "#697b74"
 my_theme <- theme(
   
   # title
-  plot.title = element_text(family = "one", size = 14, hjust = 0, margin = margin(10, 0, 0, 0), color = d_grey),
+  plot.title = element_text(family = "one", size = 16, hjust = 0, margin = margin(10, 0, 0, 0), color = d_grey),
   
   # subtitle
   plot.subtitle = element_text(family = "one", size = 14, hjust = 0, margin = margin(0, 0, 10, 0), color = d_grey),
   
   # caption
-  plot.caption = element_text(family = "one", size = 6, hjust = 0, margin = margin(10, 0, 10, 0), color = d_grey),
+  plot.caption = element_text(family = "one", size = 8, hjust = 0, margin = margin(10, 0, 10, 0), color = d_grey),
 
   # panel background
   plot.background = element_rect(fill = white),
@@ -111,7 +111,7 @@ my_theme <- theme(
   axis.line.y = element_line(color = d_grey),
   
   # customize y axis
-  axis.text = element_text(family = "two", size = 9, color = d_grey),
+  axis.text = element_text(family = "two", size = 10.25, color = d_grey),
   
   # remove axis text and ticks
   axis.text.x = element_blank(),
@@ -146,7 +146,7 @@ my_plot <- combo %>%
            x = "16 to 24 years", 
            y = -30, label = "16 to 24 \nyears", 
            family = "two", 
-           size = 3, 
+           size = 3.5, 
            vjust = 1,
            color = d_grey) +
   
@@ -155,7 +155,7 @@ my_plot <- combo %>%
            y = -30, 
            label = "25 to 34 \nyears", 
            family = "two", 
-           size = 3, 
+           size = 3.5, 
            vjust = 1,
            color = d_grey) +
   
@@ -164,7 +164,7 @@ my_plot <- combo %>%
            y = -30, 
            label = "35 to 44 \nyears", 
            family = "two", 
-           size = 3, 
+           size = 3.5, 
            vjust = 1,
            color = d_grey) +  
   
@@ -173,7 +173,7 @@ my_plot <- combo %>%
            y = -30, 
            label = "45 to 54 \nyears", 
            family = "two", 
-           size = 3, 
+           size = 3.5, 
            vjust = 1,
            color = d_grey) +
   
@@ -182,7 +182,7 @@ my_plot <- combo %>%
            y = -30, 
            label = "55 to 64 \nyears", 
            family = "two", 
-           size = 3, 
+           size = 3.5, 
            vjust = 1,
            color = d_grey) +
   
@@ -191,7 +191,7 @@ my_plot <- combo %>%
            y = -30, 
            label = "65 years \nand over", 
            family = "two", 
-           size = 3, 
+           size = 3.5, 
            vjust = 1,
            color = d_grey) +
   
@@ -200,7 +200,7 @@ my_plot <- combo %>%
            y = -30, 
            label = "Asian", 
            family = "two", 
-           size = 3, 
+           size = 3.5, 
            vjust = 1,
            color = d_grey) +
   
@@ -209,7 +209,7 @@ my_plot <- combo %>%
            y = -30, 
            label = "Black or \nAfrican American",
            family = "two",
-           size = 3,
+           size = 3.5,
            vjust = 1,
            color = d_grey) +
   
@@ -218,7 +218,7 @@ my_plot <- combo %>%
            y = -30, 
            label = "White", 
            family = "two", 
-           size = 3, 
+           size = 3.5, 
            vjust = 1,
            color = d_grey) +
   
@@ -227,7 +227,7 @@ my_plot <- combo %>%
            y = -30, 
            label = "Hispanic or \nLatino", 
            family = "two", 
-           size = 3, 
+           size = 3.5, 
            vjust = 1,
            color = d_grey) +
 
@@ -236,7 +236,7 @@ my_plot <- combo %>%
            y = -185, 
            label = "Age", 
            family = "two", 
-           size = 3, 
+           size = 3.5, 
            vjust = 1,
            color = d_grey) +
   
@@ -245,7 +245,7 @@ my_plot <- combo %>%
            y = -185, 
            label = "Race and ethnicity, 16 years & older", 
            family = "two", 
-           size = 3, 
+           size = 3.5, 
            vjust = 1,
            color = d_grey) +
   
