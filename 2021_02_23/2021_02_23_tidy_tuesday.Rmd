@@ -1,0 +1,324 @@
+---
+title: "TidyTemplate"
+author: Jackie Torres
+date: 2021-02-23
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(forcats) # for factoring by order of appearance
+library(scales) # for dollar signs
+library(ragg) # for png
+library(showtext)# for google fonts
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-02-23")
+
+```
+# Pull Data
+
+```{r}
+
+earn <- tt$earn
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+# filter df with most recent year and quarter
+earn <- earn %>%
+  filter(year == 2020, quarter == 4, sex %in% c("Men", "Women"))
+
+# create a df for median weekly earnings by AGE
+age <- earn %>%
+  filter(race == "All Races", ethnic_origin == "All Origins", age %in% c("16 to 24 years", "25 to 34 years", "35 to 44 years", "45 to 54 years", "55 to 64 years", "65 years and over")) %>%
+  select(sex, age, median_weekly_earn) %>%
+  rename(group = age)
+
+# create a df for median weekly earnings by RACE (White, Black or African American, Asian)
+race <- earn %>%
+  filter(age == "16 years and over", race != "All Races") %>%
+  select(sex, race, median_weekly_earn) %>%
+  rename(group = race) %>%
+  arrange(group)
+
+# create a df for median weekly earnings by HISPANIC Or LATINO ETHNIC ORIGIN
+race_hispanic <- earn %>%
+  filter(age == "16 years and over", ethnic_origin == "Hispanic or Latino") %>%
+  select(sex, ethnic_origin, median_weekly_earn) %>%
+  rename(group = ethnic_origin)
+
+# merge all into a new df
+combo <- bind_rows(age, race, race_hispanic)
+
+```
+
+# Visualize
+
+```{r}
+
+# add google fonts
+font_add_google(name = "Merriweather", family = "one")
+font_add_google(name = "Nanum Gothic", family = "two")
+
+# my colors
+d_grey <- "#5f6060"
+white <- "#EEF0F2"
+black <- "#001427"
+green <- "#697b74"
+
+# my theme
+my_theme <- theme(
+  
+  # title
+  plot.title = element_text(family = "one", size = 14, hjust = 0, margin = margin(10, 0, 0, 0), color = d_grey),
+  
+  # subtitle
+  plot.subtitle = element_text(family = "one", size = 14, hjust = 0, margin = margin(0, 0, 10, 0), color = d_grey),
+  
+  # caption
+  plot.caption = element_text(family = "one", size = 6, hjust = 0, margin = margin(10, 0, 10, 0), color = d_grey),
+
+  # panel background
+  plot.background = element_rect(fill = white),
+  panel.background = element_rect(fill = white),
+  
+  # customize panel grid
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  
+  # legend
+  legend.position = "none",
+  
+  # axis line
+  axis.line.y = element_line(color = d_grey),
+  
+  # customize y axis
+  axis.text = element_text(family = "two", size = 9, color = d_grey),
+  
+  # remove axis text and ticks
+  axis.text.x = element_blank(),
+  axis.ticks = element_blank(),
+  axis.ticks.length.x = unit(0, "lines")
+)
+
+# my plot
+
+my_plot <- combo %>%
+  
+  ggplot(aes(x = fct_inorder(group),
+             y = median_weekly_earn, 
+             group = group)) +
+  
+  # add line segments
+  geom_line(color = d_grey,
+            linetype = "dashed") +
+
+  # add earnings labels
+  geom_label(
+    aes(
+      label = dollar(median_weekly_earn), 
+      fill = sex),
+    label.padding = unit(.4, "lines"), 
+    label.size = .5, 
+    family = "two",
+    color = white) +
+  
+  # annotate x-axis labels
+  annotate("text", 
+           x = "16 to 24 years", 
+           y = -30, label = "16 to 24 \nyears", 
+           family = "two", 
+           size = 3, 
+           vjust = 1,
+           color = d_grey) +
+  
+  annotate("text", 
+           x = "25 to 34 years", 
+           y = -30, 
+           label = "25 to 34 \nyears", 
+           family = "two", 
+           size = 3, 
+           vjust = 1,
+           color = d_grey) +
+  
+  annotate("text", 
+           x = "35 to 44 years", 
+           y = -30, 
+           label = "35 to 44 \nyears", 
+           family = "two", 
+           size = 3, 
+           vjust = 1,
+           color = d_grey) +  
+  
+  annotate("text", 
+           x = "45 to 54 years", 
+           y = -30, 
+           label = "45 to 54 \nyears", 
+           family = "two", 
+           size = 3, 
+           vjust = 1,
+           color = d_grey) +
+  
+  annotate("text", 
+           x = "55 to 64 years", 
+           y = -30, 
+           label = "55 to 64 \nyears", 
+           family = "two", 
+           size = 3, 
+           vjust = 1,
+           color = d_grey) +
+  
+  annotate("text", 
+           x = "65 years and over", 
+           y = -30, 
+           label = "65 years \nand over", 
+           family = "two", 
+           size = 3, 
+           vjust = 1,
+           color = d_grey) +
+  
+  annotate("text", 
+           x = "Asian", 
+           y = -30, 
+           label = "Asian", 
+           family = "two", 
+           size = 3, 
+           vjust = 1,
+           color = d_grey) +
+  
+  annotate("text", 
+           x = "Black or African American", 
+           y = -30, 
+           label = "Black or \nAfrican American",
+           family = "two",
+           size = 3,
+           vjust = 1,
+           color = d_grey) +
+  
+  annotate("text", 
+           x = "White", 
+           y = -30, 
+           label = "White", 
+           family = "two", 
+           size = 3, 
+           vjust = 1,
+           color = d_grey) +
+  
+  annotate("text", 
+           x = "Hispanic or Latino", 
+           y = -30, 
+           label = "Hispanic or \nLatino", 
+           family = "two", 
+           size = 3, 
+           vjust = 1,
+           color = d_grey) +
+
+  annotate("text", 
+           x = 3.5, 
+           y = -185, 
+           label = "Age", 
+           family = "two", 
+           size = 3, 
+           vjust = 1,
+           color = d_grey) +
+  
+  annotate("text", 
+           x = 8.5, 
+           y = -185, 
+           label = "Race and ethnicity, 16 years & older", 
+           family = "two", 
+           size = 3, 
+           vjust = 1,
+           color = d_grey) +
+  
+  # annotate legend with text
+  annotate("text", 
+           x = 8, 
+           y = 1350, 
+           label = "Men", 
+           family = "two", 
+           size = 4, 
+           vjust = 1,
+           color = black) +
+  
+  annotate("text", 
+           x = 8, 
+           y = 1200, 
+           label = "Women", 
+           family = "two", 
+           size = 4, 
+           vjust = 1,
+           color = green) +
+  
+  # annotate fill with arrows
+  annotate(
+    geom = "curve", 
+    x = 8, 
+    y = 1360, 
+    xend = 7.4,
+    yend = 1457, 
+    curvature = ".2",
+    arrow = arrow(length = unit(3, "mm")),
+    size = .3,
+    color = black) +
+  
+    annotate(
+    geom = "curve", 
+    x = 8, 
+    y = 1150, 
+    xend = 7.4,
+    yend = 1091, 
+    curvature = "-.2",
+    arrow = arrow(length = unit(3, "mm")),
+    size = .3,
+    color = green) +
+  
+  # add additional x-axis borders
+  geom_segment(x = 6.5, y = 0, xend = 6.5, yend = -300, color = d_grey) +
+  
+  # add a horizontal line
+  geom_hline(yintercept = 0, color = d_grey) +
+  
+  # scales
+  scale_y_continuous(limits = c(-190, 1500), labels = dollar) +
+  scale_fill_manual(values = c(black, green)) +
+  
+  # labs
+  labs(
+    title = "Median weekly earnings by age, race and ethnicity, and sex",
+    subtitle = "Fourth quarter, 2020",
+    caption = "Design: Jackie Torres | Source: BLS | #TidyTuesday 2021W9",
+    y = NULL,
+    x = NULL
+  ) +
+  
+  # use my theme
+  my_theme
+  
+my_plot
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 10, height = 7, units = "in", res = 300))
+
+```
+
