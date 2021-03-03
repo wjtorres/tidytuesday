@@ -1,0 +1,124 @@
+---
+title: "TidyTemplate"
+author: Jackie Torres
+date: 2021-03-01
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(treemap)
+library(RColorBrewer) # to find hex codes
+
+library(ragg) # for png
+library(showtext)# for google fonts
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+```
+
+# load the weekly data
+
+```{r}
+
+tt <- tt_load("2021-03-02")
+
+```
+# readme
+
+```{r}
+
+tt
+
+```
+# pull data
+
+```{r}
+
+youtube <- tt$youtube
+
+youtube %>%
+  count(animals) # 92 ads featured animals; 155 ads did not
+
+```
+
+# wrangle
+
+```{r}
+
+animals <- youtube %>%
+  
+  # correct spelling
+  mutate(brand = case_when(
+    brand == "Hynudai" ~ "Hyundai",
+    TRUE ~ .$brand
+  )) %>%
+  
+  # select relevant columns
+  select(brand, animals) %>%
+  
+  # group by brand and count number of times animals were featured in their brands
+  group_by(brand) %>%
+  mutate(feature_count = sum(animals)) %>%
+  
+  # remove animals column
+  select(-animals) %>%
+  
+  # keep only distinct; ungroup; note that NFL = 0 ads so will remove
+  distinct() %>%
+  ungroup() %>%
+  filter(brand != "NFL")
+
+# double check a total of 92 ads featured animals
+animals %>%
+  summarise(sum = sum(feature_count))
+
+# create a new column that will be used as a customized label in treemap
+animals$label <- paste(animals$feature_count, "ads", sep = " ") # first paste the text 'ads'
+animals$label <- paste(animals$brand, animals$label, sep = "\n") # second paste the brand name and this time include a line break
+
+```
+
+# visualize
+
+```{r}
+
+# my color palette
+brewer.pal(n = 9, name = "Purples")
+
+# note that color palette is assigned alphabetically by the index column
+my_color_pal <- c("#3F007D", "#3F007D", "#54278F", "#6A51A3", "#BCBDDC", "#807DBA", "#9E9AC8",  "#DADAEB", "#DADAEB")
+
+# add google fonts
+font_add_google(name = "Merriweather", family = "one")
+font_add_google(name = "Nanum Gothic", family = "two")
+
+# open device
+agg_png(filename = "my_plot.png", width = 8, height = 7, units = "in",
+        res = 320)
+
+# treemap
+treemap(
+  animals, # this is my data
+  index = "label", # this is the column that provides my groups and feature count
+  vSize = "feature_count", # this is the column that provides the size of my groups
+  type = "index", # this specifies organization of treemap, in this case 'index' colors are determined by index labels
+  palette = my_color_pal,  # select color palette
+  title = "How many Super Bowl ads featured animals among brands that aired the most spots (2000-2020)?", # customize my title,
+  fontsize.title = 12, # change font size of the title
+  fontfamily.title = "one", # change font family of the title
+  fontsize.labels = 12, # change font size of the labels
+  fontfamily.labels = "two", # change font family of the labels
+  border.col = "white" # change border color
+)
+
+# close device
+dev.off()
+```
