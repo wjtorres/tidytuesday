@@ -4,6 +4,10 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 ## Most recent plots
 
+### 2021-03-02 | Week 10 | Super Bowl Ads | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_02)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_03_02/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_02)
+
 ### 2021-02-23 | Week 9 | Employment and Earnings | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_23)
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_02_23/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_23)
@@ -12,14 +16,14 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_02_16/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_16)
 
-### 2021-02-09 | Week 7 | Wealth and Income | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_09)
-
-[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_02_09/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_09)
-
 
 
 <details>
   <summary>2021 codes and plots</summary>
+
+### 2021-02-09 | Week 7 | Wealth and Income | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_09)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_02_09/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_09)
 
 ### 2021-02-02 | Week 6 | HBCU Enrollment | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_02)
 
