@@ -4,6 +4,10 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 ## Most recent plots
 
+### 2021-03-09 | Week 11 | Bechdel Test | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_09)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_03_09/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_09)
+
 ### 2021-03-02 | Week 10 | Super Bowl Ads | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_02)
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_03_02/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_02)
@@ -12,14 +16,14 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_02_23/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_23)
 
-### 2021-02-16 | Week 8 | W.E.B. Du Bois Challenge | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_16)
-
-[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_02_16/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_16)
-
 
 
 <details>
   <summary>2021 codes and plots</summary>
+
+### 2021-02-16 | Week 8 | W.E.B. Du Bois Challenge | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_16)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_02_16/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_16)
 
 ### 2021-02-09 | Week 7 | Wealth and Income | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_09)
 
