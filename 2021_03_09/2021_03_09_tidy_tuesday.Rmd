@@ -1,0 +1,161 @@
+---
+title: "TidyTemplate"
+author: Jackie Torres
+date: 2021-03-09
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(ragg)
+library(showtext)
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-03-09")
+
+```
+
+# Pull Data
+
+```{r Glimpse}
+
+movies <- tt$movies
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+# create a decades variable
+movies_count <- movies %>%
+  filter(year < 2010) %>%
+  mutate(decade = case_when(
+    year >= 1970 & year < 1980 ~ "1970s",
+    year >= 1980 & year < 1990 ~ "1980s",
+    year >= 1990 & year < 2000 ~ "1990s",
+    year >= 2000 & year < 2010 ~ "2000s",
+    )) %>%
+  select(year, decade, binary) %>%
+  arrange(year)
+
+# factor decades variable based on order of appearance
+movies_count$decade <- fct_inorder(movies_count$decade)
+
+# count pass/fail rates by decade
+movies_count %>%
+  group_by(decade, binary) %>%
+  count()
+
+# computate percentage pass rate
+movies_perc <- movies_count %>%
+  group_by(decade) %>%
+  mutate(percentage_pass = mean(binary == "PASS")) %>%
+  select(decade, percentage_pass) %>%
+  distinct()
+  
+
+```
+
+
+# Visualize
+
+```{r}
+
+# my fonts
+font_add_google(name = "Crimson Text", family = "one")
+
+
+# my colors
+white <- "#FFFFFF"
+d_grey <- "#7d7d7d"
+grey <- "#C5CBD3"
+blue <- "#009FB7"
+
+# my theme
+my_theme <- theme(
+  
+   # title
+  plot.title = element_text(family = "one", color = d_grey, size = 16, hjust = 0, margin = margin(5, 0, 10, 0)),
+  
+  # subtitle
+  plot.subtitle = element_text(family = "one", color = d_grey, size = 12, hjust = 0, margin = margin(0, 0, 20, 0)),
+  
+  # caption
+  plot.caption = element_text(family = "one", color = d_grey, size = 8, hjust = 0, margin = margin(10, 0, 10, 0)),
+  
+  # plot and panel background
+  plot.background = element_rect(fill = white),
+  panel.background = element_rect(fill = white),
+  
+  # remove grid
+  panel.grid.major = element_blank(), 
+  panel.grid.minor = element_blank(),
+  
+  # legend
+  legend.position = "right",
+  legend.title = element_blank(),
+  legend.text = element_text(family = "one", color = d_grey, size = 16),
+  legend.key.width = unit(.3, "in"),
+  
+  # axis text
+  axis.text.x = element_text(family = "one", color = d_grey, size = 20),
+  axis.text.y = element_blank(),
+  
+  # axis ticks
+  axis.ticks = element_blank()
+)
+
+# my plot
+my_plot <- movies_count %>%
+  ggplot(aes(x = decade, fill = binary)) +
+  
+  # add proportional bar plot
+  geom_bar(position = "fill", width = .97) +
+  
+  # add labels
+  annotate("text", x = "1970s", y = .15, label = "26%", color = white, size = 7, family = "one") +
+  annotate("text", x = "1980s", y = .15, label = "29%", color = white, size = 7, family = "one") +
+  annotate("text", x = "1990s", y = .15, label = "44%", color = white, size = 7, family = "one") +
+  annotate("text", x = "2000s", y = .15, label = "49%", color = white, size = 7, family = "one") +
+  
+  # scales
+  scale_fill_manual(values = c(grey, blue), labels = c("failed", "passed")) +
+  scale_x_discrete(expand = c(0,0), position = "top") +
+  scale_y_continuous(expand = c(0,0)) +
+  
+  # labs
+  labs(
+    title = "What percentage of movies pass the Bechdel Test?",
+    subtitle = "Criteria:\n1) at least two named women, and \n2) they have a conversation with each other, and \n3) conversation is not about a male character",
+    x = NULL,
+    y = NULL,
+    caption = "Design: Jackie Torres | Source: FiveThirtyEight | #TidyTuesday 2021W11"
+  ) +
+  
+  # use my theme
+  my_theme
+
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 7, height = 5, units = "in", res = 300))
+
+
+```
