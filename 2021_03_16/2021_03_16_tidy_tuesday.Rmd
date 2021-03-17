@@ -1,0 +1,193 @@
+---
+title: "TidyTemplate"
+date: 2021-03-16
+author: Jackie Torres
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+
+library(showtext) # for adding google font
+library(ragg) # for agg_png function; draw to a PNG file
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-03-16")
+
+```
+
+# Pull Data
+
+```{r Glimpse}
+
+games <- tt$games
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+# create a df for portal video game; select years for which all monthly data is available
+portal <- games %>%
+  filter(gamename == "Portal") %>%
+  filter(year >= 2013 & year <= 2020)
+
+# recode month names to abbreviated version
+portal$month_f <- recode(portal$month, 
+                         January = "Jan",
+                         February = "Feb",
+                         March = "Mar",
+                         April = "Apr",
+                         May = "May",
+                         June = "Jun",
+                         July = "Jul",
+                         August = "Aug",
+                         September = "Sep",
+                         October = "Oct",
+                         November = "Nov",
+                         December = "Dec")
+
+# month as factor variable (this is important for x-axis month order)
+# first, create a list of levels
+month_levels <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+#then, as a factor
+portal$month_f <- factor(portal$month_f, levels = month_levels)
+
+# create df - avg # of players by month
+portal_avg_month <- portal %>%
+  select(month_f, avg) %>%
+  group_by(month_f) %>%
+  summarize(avg = mean(avg)) %>%
+  mutate(toHighlight = if_else(month_f == "Dec", "yes", "no" 
+  ))
+
+# create df - year labels for geom_text (2013)
+# label must be a factor for facet wrap to work
+label_2013 <- 
+  tribble(
+    ~month_f, ~year, ~avg,
+    "Aug", 2013, 270)
+
+label_2013$month_f <- factor(label_2013$month_f, levels = c("Aug"))
+
+# create df - year labels for geom_text (2013)
+# label must be a factor for facet wrap to work
+label_2020 <- 
+  tribble(
+    ~month_f, ~year, ~avg,
+    "Aug", 2020, 500)
+
+label_2020$month_f <- factor(label_2013$month_f, levels = c("Aug"))
+
+```
+
+
+# Visualize
+
+```{r Visualize}
+
+# add google fonts
+font_add_google(name = "Baloo Da 2", family = "one")
+
+# my colors
+white <- "#FFFFFF"
+l_grey <- "#e9e9e9"
+d_grey <- "#404040"
+l_blue <- "#cbe1ff"
+blue <- "#005DDF"
+
+# my theme
+my_theme <- theme(
+  
+  # title
+  plot.title = element_text(family = "one", face = "bold", size = 8, hjust = .5, margin = margin(5, 0, 5, 0), color = d_grey),
+  
+  # subtitle
+  plot.subtitle = element_text(family = "one", size = 8, hjust = .5, margin = margin(0, 0, 10, 0), color = d_grey),
+  
+  # caption
+  plot.caption = element_text(family = "one", size = 5, hjust = 1, margin = margin(5, 0, 0, 0), color = d_grey),
+  
+  # panel and plot background
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  panel.background = element_rect(fill = l_grey, color = NA),
+  plot.background = element_rect(fill = white),
+
+  # axis text
+  axis.text.x = element_blank(), # removes years from x-axis
+  axis.text.y = element_text(family = "one", size = 6), # customize font for y-axis average values
+
+  # axis ticks
+  axis.ticks = element_blank(),
+  
+  # facet wrap spacing
+  panel.spacing.x = unit(.2, "lines"),
+
+  # strip background (facet wrap)
+  strip.background = element_blank(),
+  strip.text.x = element_text(family = "one", color = d_grey, size = 6)
+)
+
+# my plot
+my_plot <- portal %>%
+  ggplot(aes(x = year, y = avg)) +
+  
+  # add rectangle to highlight Dec facet only
+  geom_rect(data = subset(portal, month_f == "Dec"), aes(fill = month_f), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
+  
+  # add time line
+  geom_line(size = .05, color = d_grey) +
+  
+  # add average lines
+  geom_hline(data = portal_avg_month, aes(yintercept = avg, color = toHighlight), size = .75) +
+
+  # scales
+  scale_y_continuous(expand = c(0, 0), limits = c(0, NA)) +
+  scale_fill_manual(values = c("Dec" = l_blue), guide = FALSE) +
+  scale_color_manual(values = c("yes" = d_grey, "no" = d_grey), guide = FALSE ) +
+  
+  # add a facet wrap by month
+  facet_wrap(~month_f, nrow = 1, strip.position = "bottom") +
+  
+  # add geom text labels
+  geom_text(data = label_2013, aes(x = year, y = avg, label = year), family = "one", size = 1.5, hjust = 0, vjust = 0) +
+  geom_text(data = label_2020, aes(x = year, y = avg, label = year), family = "one", size = 1.5, hjust = 1, vjust = 0) +
+  
+  # labs
+  labs(
+    title = "PORTAL ON STEAM",
+    subtitle = "Between 2013 and 2020, the average number of players at the same time was highest in December.",
+    x = NULL,
+    y = NULL,
+    caption = "Design: Jackie Torres | Source: Steam | #TidyTuesday 2021W12"
+  ) +
+  
+  # add my theme
+  my_theme
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 7, height = 2, units = "in", res = 300))
+
+# turn off device
+dev.off()
+  
+```
