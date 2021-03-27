@@ -1,0 +1,164 @@
+---
+title: "TidyTemplate"
+author: Jackie Torres
+date: 2021-03-27
+output: html_output
+---
+
+# TidyTuesday
+
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+
+library(showtext) # for adding google font
+library(ragg) # for agg_png function; draw to a PNG file
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-03-23")
+
+```
+
+# Pull Data
+
+```{r Glimpse}
+
+unvotes <- tt$unvotes
+
+roll_calls <- tt$roll_calls
+
+issues <- tt$issues
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+tv <- unvotes %>%
+  
+  # World Television Day
+  filter(rcid == 4034)
+
+yes <- tv %>%
+  
+  # filter by vote
+  filter(vote == "yes") %>%
+  
+  # sort by abc
+  arrange(desc(country)) %>%
+  
+  #add a y
+  mutate(y = 1:n())
+
+no <- tv %>%
+  
+  # filter by vote
+  filter(vote == "abstain") %>%
+  
+  # sort by abc
+  arrange(desc(country)) %>%
+  
+  #add a y
+  mutate(y = 1:n())
+
+```
+
+# Visualize
+
+```{r Visualize}
+
+# add google fonts
+font_add_google(name = "Baloo Da 2", family = "one")
+
+# my colors
+white <- "#FFFFFF"
+l_grey <- "#e9e9e9"
+d_grey <- "#404040"
+l_blue <- "#cbe1ff"
+
+# my theme
+my_theme <- theme(
+
+  # caption
+  plot.caption = element_text(family = "one", size = 8, hjust = 0, margin = margin(30, 0, 0, 0), color = d_grey),
+  
+  # panel and plot background
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  panel.background = element_rect(fill = white, color = NA),
+  plot.background = element_rect(fill = white),
+  
+  # axis
+  axis.title = element_blank(),
+  axis.text = element_blank(),
+  axis.ticks = element_blank(),
+  
+)
+
+
+# my plot
+
+my_plot <-
+  
+  ggplot() +
+  
+  # add a bar plot
+  
+  geom_bar(data = tv, aes(x = vote, fill = vote)) +
+  
+  # add text for countries that voted yes
+  
+  geom_text(data = yes, aes(x = vote, y = y, label = country), vjust = 1, family = "one", size = 1.5, color = d_grey) +
+
+  # add text for countries that voted to abstain
+
+  geom_text(data = no, aes(x = vote, y = y, label = country), vjust = 1, family = "one", size = 1.5, color = d_grey) +
+  
+  # add title
+  annotate("text", x = 1, y = 120, label = "WORLD TELEVISION DAY", family = "one", size = 5, color = d_grey) +
+  
+  # add subtitle
+  annotate("text", x = 1, y = 115, label = "21 November", family = "one", size = 5, color = d_grey) +
+  
+  # add summary text
+  annotate("text", x = 1, y = 100, label = "In 1996, the majority of UN \nmembers voted to recognize \nthe television for its impact \non communication.", family = "one", size = 3, color = d_grey) +
+  
+  # add counts
+  annotate("text", x = 1, y = 12, label = "11 countries abstained", family = "one", size = 3, color = d_grey) +
+  annotate("text", x = 2, y = 142, label = "141 countries voted yes", family = "one", size = 3, color = d_grey) +
+  
+  # scales
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 150)) +
+  scale_fill_manual(values = c( "abstain" = l_grey, "yes" = l_blue), guide = FALSE) +
+  
+  # labs
+  labs(
+    x = NULL,
+    y = "COUNT",
+    caption = "Design: Jackie Torres | Source: Harvard Dataverse | #TidyTuesday 2021W13"
+  ) +
+  
+  # add my theme
+  my_theme
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 5, height = 10, units = "in", res = 300))
+  
+```
