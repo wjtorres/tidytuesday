@@ -4,6 +4,10 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 ## Most recent plots
 
+### 2021-03-23 | Week 13 | UN Votes | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_23)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_03_23/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_23)
+
 ### 2021-03-16 | Week 12 | Video Games + Sliced | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_16)
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_03_16/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_16)
@@ -12,13 +16,13 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_03_09/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_09)
 
-### 2021-03-02 | Week 10 | Super Bowl Ads | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_02)
-
-[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_03_02/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_02)
-
 
 <details>
   <summary>2021 codes and plots</summary>
+
+### 2021-03-02 | Week 10 | Super Bowl Ads | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_02)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_03_02/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_02)
 
 ### 2021-02-23 | Week 9 | Employment and Earnings | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_02_23)
 
