@@ -1,0 +1,213 @@
+---
+title: "TidyTemplate"
+author: Jackie Torres
+date: 2021-03-30
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(patchwork)
+
+library(showtext) # for adding google font
+library(ragg) # for agg_png function; draw to a PNG file
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-03-30")
+
+```
+
+# Pull Data
+
+```{r Glimpse}
+
+shades <- tt$allShades
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+# identify the brands with the most products
+shades %>%
+  count(brand, sort = TRUE)
+
+# create dfs for brands with the top6 most products
+bareMinerals <- shades %>%
+  filter(brand == "bareMinerals") %>%
+  arrange(desc(lightness)) %>%
+  select(product, lightness, hex) %>%
+  mutate(value = 1)
+
+Tarte <- shades %>%
+  filter(brand == "Tarte") %>%
+  arrange(desc(lightness)) %>%
+  select(product, lightness, hex) %>%
+  mutate(value = 1)
+
+Clinique <- shades %>%
+  filter(brand == "Clinique") %>%
+  arrange(desc(lightness)) %>%
+  select(product, lightness, hex) %>%
+  mutate(value = 1)
+
+Sephora <- shades %>%
+  filter(brand == "SEPHORA COLLECTION") %>%
+  arrange(desc(lightness)) %>%
+  select(product, lightness, hex) %>%
+  mutate(value = 1)
+
+Mac <- shades %>%
+  filter(brand == "MAC") %>%
+  arrange(desc(lightness)) %>%
+  select(product, lightness, hex) %>%
+  mutate(value = 1)
+
+Laura <- shades %>%
+  filter(brand == "Laura Mercier") %>%
+  arrange(desc(lightness)) %>%
+  select(product, lightness, hex) %>%
+  mutate(value = 1)
+
+```
+
+
+# Visualize
+
+```{r Visualize}
+
+# add google fonts
+font_add_google(name = "Della Respira", family = "one")
+
+# my colors
+white <- "#FFFFFF"
+d_grey <- "#404040"
+
+# my theme
+my_theme <- theme(
+  
+  # subtitle
+  plot.subtitle = element_text(family = "one", size = 10, color = d_grey, hjust = .5),
+  
+  # panel and plot background
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  panel.background = element_rect(fill = white, color = NA),
+  plot.background = element_rect(fill = white),
+  
+  # axis
+  axis.title = element_blank(),
+  axis.text = element_blank(),
+  axis.ticks = element_blank(),
+)
+
+# my plots
+
+# plot1
+plot1 <- bareMinerals %>%
+  ggplot(aes(x="", y = value, fill = hex)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start=0) +
+  scale_fill_manual(values = bareMinerals$hex, guide = F) +
+  labs(
+    subtitle = "bareMinerals"
+  ) +
+  my_theme
+
+plot1
+
+# plot2
+plot2 <- Tarte %>%
+  ggplot(aes(x="", y = value, fill = hex)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start=0) +
+  scale_fill_manual(values = Tarte$hex, guide = F) +
+  labs(
+    subtitle = "Tarte"
+  ) +
+  my_theme
+
+plot2
+
+# plot3
+plot3 <- Clinique %>%
+  ggplot(aes(x="", y = value, fill = hex)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start=0) +
+  scale_fill_manual(values = Clinique$hex, guide = F) +
+  labs(
+    subtitle = "Clinique"
+  ) +
+  my_theme
+
+plot3
+
+# plot4
+plot4 <- Sephora %>%
+  ggplot(aes(x="", y = value, fill = hex)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start=0) +
+  scale_fill_manual(values = Sephora$hex, guide = F) +
+  labs(
+    subtitle = "SEPHORA COLLECTION"
+  ) +
+  my_theme 
+
+plot4
+
+# plot5
+plot5 <- Mac %>%
+  ggplot(aes(x="", y = value, fill = hex)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start=0) +
+  scale_fill_manual(values = Mac$hex, guide = F) +
+  labs(
+    subtitle = "MAC"
+  ) +
+  my_theme
+
+plot5
+
+# plot6
+plot6 <- Laura %>%
+  ggplot(aes(x="", y = value, fill = hex)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start=0) +
+  scale_fill_manual(values = Laura$hex, guide = F) +
+  labs(
+    subtitle = "Laura Mercier"
+  ) +
+  my_theme
+
+plot6
+
+# patchwork plot
+my_plot <- (plot1 + plot2 + plot3) /
+  (plot4 + plot5 + plot6) +
+  plot_annotation(title = "Foundation shades found in brands with the most number of products",
+                  caption = "Design: Jackie Torres | Source: The Pudding | #TidyTuesday 2021W14") &
+  theme(plot.title = element_text(family = "one", size = 16, color = d_grey, hjust = .5, margin = margin(0, 0, 10, 0)),
+        plot.caption = element_text(family = "one", size = 8, color = d_grey, hjust = .5))
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 7, height = 5, units = "in", res = 300))
+
+```
