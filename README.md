@@ -4,6 +4,10 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 ## Most recent plots
 
+### 2021-04-06 | Week 15 | Global Deforestation | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_04_06)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_04_06/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_04_06)
+
 ### 2021-03-30 | Week 14 | Makeup Shades | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_30)
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_03_30/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_30)
@@ -12,15 +16,14 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_03_23/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_23)
 
-### 2021-03-16 | Week 12 | Video Games + Sliced | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_16)
-
-[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_03_16/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_16)
-
-
 
 
 <details>
   <summary>2021 codes and plots</summary>
+
+### 2021-03-16 | Week 12 | Video Games + Sliced | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_16)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_03_16/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_16)
 
 ### 2021-03-09 | Week 11 | Bechdel Test | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_09)
 
