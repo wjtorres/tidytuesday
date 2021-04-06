@@ -1,0 +1,200 @@
+---
+title: "TidyTemplate"
+author: Jackie Torres
+date: 2021-04-06
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(maps)
+
+library(showtext) # for adding google font
+library(ragg) # for agg_png function; draw to a PNG file
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-04-06")
+
+```
+
+# Pull Data
+
+```{r Glimpse}
+
+forest <- tt$forest %>%
+  
+  # rename column to prep for later merge
+  rename(region = entity) %>%
+  
+  # choose most recent data available
+  filter(year == 2015)
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+# make a world map
+world <- map_data("world")
+head(world)
+
+# sample world map using ggplot
+worldplot <- ggplot() +
+  geom_polygon(data = world, aes(x=long, y = lat, group = group)) + 
+  coord_fixed(1.3)
+worldplot
+
+# check for where regions are found in forest df but not in world df
+diff <- setdiff(forest$region, world$region)
+
+# clean the forest dataset
+forest <- forest %>%
+  
+  # recode certain regions
+  mutate(region = 
+           recode(region,
+                  "Congo" = "Republic of Congo",
+                  "French Guyana" = "French Guiana",
+                  "United Kingdom" = "UK",
+                  "United States" = "USA",
+                  ),
+         
+  # cut at specific point for mapping
+         net_forest_conversion_f = cut(net_forest_conversion, breaks = c(-1500000, -400000, -200000, -100000, 0, 100000, 200000, 400000, 2000000))
+         )
+
+# check again for where regions are found in forest df but not in world df
+diff <- setdiff(forest$region, world$region)
+
+# merge the datasets
+merged <- inner_join(world, forest, by = "region")
+head(merged)
+
+```
+
+
+# Visualize
+
+```{r Visualize}
+
+# add google fonts
+font_add_google(name = "Spartan", family = "one")
+
+# my colors
+l_blue <- "#add8e6"
+d_grey <- "#404040"
+
+# my theme
+my_theme <- theme(
+  
+  # title
+  plot.title = element_text(family = "one", size = 16, color = d_grey, hjust = 0, margin = margin(10, 0, 0, 0),),
+  
+  # subtitle
+  plot.subtitle = element_text(family = "one", size = 9, color = d_grey, hjust = 0, margin = margin(10, 0, 10, 0),),
+  
+  # caption
+  plot.caption = element_text(family = "one", size = 6, color = d_grey, hjust = 0, margin = margin(10, 0, 0, 0),),
+  
+  # panel and plot background
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  panel.background = element_rect(fill = l_blue, color = NA),
+  plot.background = element_rect(fill = l_blue),
+  
+  # legend
+  legend.title = element_blank(),
+  legend.text = element_text(family = "one", size = 4, color = d_grey, vjust = -.15),
+  legend.position = c(.1, .4),
+  legend.direction = "vertical",
+  legend.key.size = unit(.4, "cm"),
+  legend.spacing.x = unit(.05, "cm"),
+  legend.background = element_rect(fill = l_blue,
+                                  colour = l_blue),
+  # axis
+  axis.title = element_blank(),
+  axis.text = element_blank(),
+  axis.ticks = element_blank(),
+)
+
+# my plot
+my_plot <- merged %>%
+  ggplot() +
+  
+  # add world map layer with all regions
+  geom_polygon(data = world, aes(x = long, y = lat, group = group), fill = "gray90", color = "gray90", size = .1) +
+  
+  # add merged map layer with available regions
+  geom_polygon(data = merged, aes(x = long, y = lat, group = group, fill = net_forest_conversion_f), color = "black", size = .1) +
+  
+    # scales
+  scale_fill_manual(values = c("#ae017e", 
+                               "#f768a1", 
+                               "#fbb4b9", 
+                               "#feebe2", 
+                               "#ffffcc", 
+                               "#c2e699", 
+                               "#78c679", 
+                               "#238443"),
+                    labels = c("-400,000 hectares", 
+                               "-200,000 hectares", 
+                               "-100,000 hectares", 
+                               "0 hectares", 
+                               "+100,000 hectares", 
+                               "+200,000 hectares", 
+                               "+400,000 hectares", 
+                               ">+600,000 hectares")) +
+  
+  #annotate
+  annotate("text", 
+         x = -37, 
+         y = -20, 
+         label = "Brazil lost 1,453,040 \nhectares of forest area", 
+         family = "one",
+         size = 1.5, 
+         hjust = 0,
+         color = d_grey) +
+  
+  #annotate
+  annotate("text", 
+         x = 130, 
+         y = 25, 
+         label = "China gained 1,936,790 \nhectares of forest area",
+         family = "one",
+         size = 1.5, 
+         hjust = 0,
+         color = d_grey) +
+  
+ # labs
+  labs(
+    title = "Net change in forest cover, 2015",
+    subtitle = "Net change in forest cover is a measure of gains in forest area, such as through natural forest \nexpansion or tree-planting, minus deforestation. Countries which are gaining more forest \narea than is being lost are shown in green; countries which are losing more forest area \nthan is being restored are shown in pink. One hectare = 2.47 acres.",
+    caption = "Design: Jackie Torres | Source: Our World in Data | #TidyTuesday 2021W15"
+  ) +
+  
+  # add my theme
+  my_theme
+
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 7, height = 5, units = "in", res = 300))
+  
+```
