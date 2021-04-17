@@ -1,0 +1,135 @@
+---
+title: "TidyTemplate"
+author: Jackie Torres
+date: 2021-04-13
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+
+library(showtext) # for adding google font
+library(ragg) # for agg_png function; draw to a PNG file
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-04-13")
+
+```
+
+
+# Readme
+
+```{r Readme, eval = interactive()}
+
+tt
+
+```
+
+# Pull Data
+
+```{r Glimpse}
+
+offices <- tt$post_offices
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+offices_clean <- offices %>%
+  filter(duration >= 170, duration <= 198) %>%
+  select(name, state, established, discontinued, duration) %>%
+  mutate(name_state = paste(name, state, sep = ", ")) %>%
+  arrange(desc(name)) %>%
+  mutate(ymin = seq(1, 310, by = 10)) %>%
+  mutate(ymax = seq(10, 310, by = 10))
+
+```
+
+# Visualize
+
+```{r Visualize}
+
+# add google font
+font_add_google(name = "Spartan", family = "one")
+
+# my colors
+l_blue <- "#00C0FF"
+blue <- "#7398b2"
+d_blue <- "#2d376a"
+white <- "#ffffff"
+l_grey <- "#E1E1E1"
+
+# my theme
+my_theme <- theme(
+  
+  # title
+  plot.title = element_text(size = 18, color = l_grey, family = "one", hjust = .5, margin = margin(10, 0, 20, 0),),
+  
+  # caption
+  plot.caption = element_text(size = 14, color = l_grey, family = "one", hjust = 0, margin = margin(20, 0, 0, 0),),
+  
+  # panel and plot background
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  panel.background = element_rect(fill = d_blue, color = NA),
+  plot.background = element_rect(fill = d_blue),
+  
+  # axis
+  axis.title.x =  element_text(size = 14, color = l_grey, family = "one"),
+  axis.title.y = element_blank(),
+  axis.text.x =  element_text(size = 14, color = l_grey, family = "one"),
+  axis.text.y = element_blank(),
+  axis.ticks = element_blank(),
+)
+
+my_plot <- offices_clean %>%
+  ggplot() +
+  
+  # add duration as rectangles
+  geom_rect(aes(xmin = established, xmax = discontinued, ymin = ymin, ymax = ymax), color = blue, fill = blue) +
+  
+  # add post office name and location
+  geom_text(aes(x = established +(discontinued - established)/2, y = ymin + (ymax - ymin)/2, label = name_state), color = white, size = 5, family = "one") +
+  
+  # add established year
+  geom_text(aes(x = established - 10, y = ymin + (ymax - ymin)/2, label = established), color = l_grey, size = 4, family = "one") +
+  
+  # add discontinued year
+  geom_text(aes(x = discontinued + 10, y = ymin + (ymax - ymin)/2, label = discontinued), color = l_grey, size = 4, family = "one") +
+  
+  # scales
+  scale_y_continuous(expand = c(0,0)) +
+
+  # add labs
+  labs(
+    title = "US Post Offices Discontinued After 170+ years",
+    caption = "Design: Jackie Torres \nSource: Blevins, Cameron; Helbock, Richard W., 2021, 'US Post Offices', \nhttps://doi.org/10.7910/DVN/NUKCNA, \nHarvard Dataverse, V1, UNF:6:8ROmiI5/4qA8jHrt62PpyA== [fileUNF] \n#TidyTuesday 2021W16",
+    x = "Year"
+  ) +
+  
+  # add my theme
+  my_theme
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 7, height = 18, units = "in", res = 300))
+  
+```
