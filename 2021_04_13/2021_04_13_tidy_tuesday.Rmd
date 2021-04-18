@@ -83,7 +83,7 @@ my_theme <- theme(
   plot.title = element_text(size = 18, color = l_grey, family = "one", hjust = .5, margin = margin(10, 0, 20, 0),),
   
   # caption
-  plot.caption = element_text(size = 14, color = l_grey, family = "one", hjust = 0, margin = margin(20, 0, 0, 0),),
+  plot.caption = element_text(size = 12, color = l_grey, family = "one", hjust = 0, margin = margin(20, 0, 0, 0),),
   
   # panel and plot background
   panel.grid.major = element_blank(),
