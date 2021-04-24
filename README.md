@@ -4,6 +4,10 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 ## Most recent plots
 
+### 2021-04-20 | Week 17 | US Post Offices | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_04_20)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_04_20/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_04_20)
+
 ### 2021-04-13 | Week 16 | US Post Offices | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_04_13)
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_04_13/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_04_13)
@@ -12,16 +16,14 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_04_06/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_04_06)
 
-### 2021-03-30 | Week 14 | Makeup Shades | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_30)
-
-[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_03_30/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_30)
-
-
-
 
 
 <details>
   <summary>2021 codes and plots</summary>
+
+### 2021-03-30 | Week 14 | Makeup Shades | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_30)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_03_30/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_30)
 
 ### 2021-03-23 | Week 13 | UN Votes | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_03_23)
 
