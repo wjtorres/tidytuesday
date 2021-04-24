@@ -1,0 +1,148 @@
+---
+title: "TidyTemplate"
+author: Jackie Torres
+date: 2021-04-20
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(lubridate)
+library(tidygraph)
+library(ggraph)
+
+library(showtext) # for adding google font
+library(ragg) # for agg_png function; draw to a PNG file
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-04-20")
+
+```
+
+
+# Pull Data
+
+```{r Glimpse}
+
+netflix <- tt$netflix_titles
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+netflix_c <- netflix %>%
+  
+  # include only movies
+  filter(type == "Movie") %>%
+  
+  # create a new column with date_added in date format
+  mutate(date_added_as_date = mdy(date_added)) %>%
+ 
+  # pull year from new data_added column
+  mutate(added_year = year(date_added_as_date)) %>%
+  
+  # select only release and added year columns
+  select(added_year, release_year) %>%
+  
+  # select only from 2020
+  filter(added_year == 2020) %>%
+
+  # group by added year, release year
+  group_by(added_year, release_year) %>%
+  
+  # count of release year
+  summarise(weight = n()) %>%
+  
+  # rename columns to "to"
+  rename(to = release_year) %>%
+  
+  # create a new colume for "from"
+  mutate(from = "2020 library") %>%
+  
+  # label
+  mutate(label = paste(to, weight, sep = ", ")) %>%
+  
+  # as factors
+  mutate(from = as.factor(from), to = as.factor(to))
+
+```
+
+
+# Visualize
+
+```{r Visualize}
+
+# add google font
+font_add_google(name = "Spartan", family = "one")
+
+# my colors
+red <- "#E50914"
+grey <- "#585858"
+
+# my theme
+my_theme <- theme(
+  
+  # title
+  plot.title = element_text(size = 18, color = grey, family = "one", hjust = 0, margin = margin(10, 0, 0, 0),),
+
+  # subtitle
+  plot.subtitle = element_text(size = 16, color = grey, family = "one", hjust = 0, margin = margin(0, 0, 0, 0),),
+
+  # caption
+  plot.caption = element_text(size = 12, color = grey, family = "one", hjust = 0, margin = margin(20, 0, 0, 0),),
+  
+  # panel
+  panel.background = element_rect(fill = "black", color = NA),
+  plot.background = element_rect(fill = "black"),
+  
+  # legends
+  legend.position = "none"
+  
+  )
+
+# make a graph object
+netflix_tidy <- tbl_graph(edges = netflix_c, directed = TRUE)
+
+# my plot
+my_plot <- 
+  ggraph(netflix_tidy, layout = 'linear') + 
+  geom_edge_arc(aes(width = weight, label = label), label_colour = "white", label_size = 3, color = grey, family = "one") +
+  scale_x_discrete() +
+  geom_node_point(color = "#E50914", size = 3) +
+  
+  # labs
+  labs(title = "Visualizing the release year of Netflix movies available in 2020",
+       subtitle = "(release year, # of movies)",
+      caption = "Design: Jackie Torres \nSource: Kaggle \n#TidyTuesday 2021W17"
+      ) +
+
+  my_theme
+
+
+
+my_plot
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 11, height = 11, units = "in", res = 300))
+
+  
+```
