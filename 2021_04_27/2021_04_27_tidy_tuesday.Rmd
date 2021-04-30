@@ -1,0 +1,147 @@
+---
+title: "TidyTemplate"
+author: Jackie Torres
+date: 2021-04-27
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+
+library(showtext) # for adding google font
+library(ragg) # for agg_png function; draw to a PNG file
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-04-27")
+
+```
+
+
+# Readme
+
+```{r Readme, eval = interactive()}
+
+tt
+
+```
+
+
+# Pull Data
+
+```{r Glimpse}
+
+departure <- tt$departures
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+# remove departure codes for other, missing, error
+departure_r <- departure %>%
+  filter(departure_code %in% c(1, 2, 3, 4, 5, 6))
+
+# create a df that does not contain the variable that will be used fo faceting (i.e., departure_code)
+departure_r_n <- departure_r %>%
+  select(fyear)
+
+```
+
+
+# Visualize
+
+```{r Visualize}
+
+# add google font
+font_add_google(name = "IBM Plex Sans", family = "one")
+
+# my colors
+d_blue <- "#2d376a"
+l_grey <- "#e9e9e9"
+d_grey <- "#a9a9a9"
+l_yellow <- "#ffffed"
+
+# new facet label names for departure variable
+departure.labs <- c("Death", "Illness", "Job Performance", "Legal Violations", "Retirement", "New Opportunity")
+names(departure.labs) <- c("1", "2", "3", "4", "5", "6")
+
+# my theme
+my_theme <- theme(
+  
+  # title
+  plot.title = element_text(size = 14, color = d_grey, family = "one", hjust = 0, margin = margin(10, 0, 10, 0),),
+  
+  # caption
+  plot.caption = element_text(size = 8, color = d_grey, family = "one", hjust = 0, margin = margin(10, 0, 0, 0),),
+  
+  # panel and plot background
+  panel.grid.major.x = element_blank(),
+  panel.grid.major.y = element_line(colour = l_grey, linetype = "dashed"),
+  panel.grid.minor = element_blank(),
+  panel.background = element_rect(fill = l_yellow, color = NA),
+  plot.background = element_rect(fill = l_yellow),
+  
+  # strip background
+  strip.background = element_blank(),
+  strip.text.x = element_text(size = 10, color = d_grey, family = "one", hjust = 0),
+  
+  # strip spacing
+  panel.spacing.y = unit(2, "lines"),
+  
+  # axis
+  axis.title =  element_text(size = 10, color = d_grey, family = "one"),
+  axis.text =  element_text(size = 10, color = d_grey, family = "one"),
+  axis.ticks = element_blank(),
+)
+
+# my plot
+my_plot <- departure_r %>%
+  ggplot(aes(x = fyear)) +
+  
+  # add layer using df that does not have the grouping variable
+  geom_histogram(data = departure_r_n, color = l_grey, fill = l_grey) +
+  
+  # add layer with df that does have the grouping variable
+  geom_histogram(color = d_blue, fill = d_blue) +
+  
+  # facet wrap using departure names
+  facet_wrap(~departure_code, nrow = 2, labeller = labeller(departure_code = departure.labs)) +
+  
+  # scales
+  scale_x_continuous(limits = c(1987, 2018)) +
+  scale_y_continuous(breaks = c(0, 250, 500)) +
+  
+ # add labs
+  labs(
+    title = "Reasons for CEO Departures",
+    caption = "Design: Jackie Torres | Source: Gentry et al. | #TidyTuesday 2021W18",
+    x = "Year",
+    y = "# of Departures"
+  ) +
+  
+  # add my theme
+  my_theme
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 7, height = 4, units = "in", res = 300))
+  
+```
