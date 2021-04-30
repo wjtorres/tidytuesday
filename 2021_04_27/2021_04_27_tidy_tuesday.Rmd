@@ -116,7 +116,7 @@ my_plot <- departure_r %>%
   ggplot(aes(x = fyear)) +
   
   # add layer using df that does not have the grouping variable
-  geom_histogram(data = departure_r_n, color = l_grey, fill = l_grey) +
+  geom_histogram(data = departure_r_n, color = l_yellow, fill = l_grey) +
   
   # add layer with df that does have the grouping variable
   geom_histogram(color = d_blue, fill = d_blue) +
