@@ -1,0 +1,146 @@
+---
+title: "TidyTemplate"
+author: Jackie Torres
+date: 2021-05-04
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+
+library(maps)
+library(showtext) # for adding google font
+library(ragg) # for agg_png function; draw to a PNG file
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-05-04")
+
+```
+
+# Pull Data
+
+```{r Glimpse}
+
+water <- tt$water
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+# create a Peru df
+peru <- water %>%
+  filter(country_name == "Peru") %>%
+  
+  # change column name to prep for later merging with world df
+  rename(region = country_name)
+
+# make a world map
+world <- map_data("world") %>%
+  
+  # keep only Peru
+  filter(region == "Peru")
+
+head(world)
+
+# sample world map using ggplot
+worldplot <- ggplot() +
+  geom_polygon(data = world, aes(x=long, y = lat, group = group)) + 
+  coord_fixed(1.3)
+
+worldplot
+
+# merge the datasets
+
+merged <- inner_join(world, peru, by = "region")
+
+head(merged)
+  
+
+```
+
+
+# Visualize
+
+```{r Visualize}
+
+# add google fonts
+font_add_google(name = "Spartan", family = "one")
+
+# my colors
+l_blue <- "#69a1a2"
+brown <- "#ad9e73"
+blue <- "#102c4a"
+d_grey <- "#404040"
+
+# my theme
+my_theme <- theme(
+  
+  # title
+  plot.title = element_text(family = "one", size = 16, color = d_grey, hjust = 0, margin = margin(10, 0, 0, 0),),
+  
+  # subtitle
+  plot.subtitle = element_text(family = "one", size = 14, color = d_grey, hjust = 0, margin = margin(0, 0, 0, 0),),
+  
+  # caption
+  plot.caption = element_text(family = "one", size = 10, color = d_grey, hjust = 0, margin = margin(10, 0, 0, 0),),
+  
+  # panel and plot background
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  panel.background = element_rect(fill = l_blue, color = NA),
+  plot.background = element_rect(fill = l_blue),
+
+  # axis
+  axis.title = element_blank(),
+  axis.text = element_blank(),
+  axis.ticks = element_blank()
+)
+
+
+# my plot
+
+my_plot <- merged %>%
+  
+  ggplot() +
+  
+  # add world map layer with all regions
+  geom_polygon(data = world, aes(x = long, y = lat, group = group), fill = brown, color = d_grey, size = .5) +
+  
+  # add merged map layer with available regions
+  geom_point(data = merged, aes(x = lon_deg, y = lat_deg), color = blue, size = 1) + 
+  
+  # labs
+  labs(
+    title = "Location of Peru water sources",
+    subtitle = "Each point represents a water source, installed between \n1970 and 2021.",
+    caption = "Design: Jackie Torres | Source: WPDX | #TidyTuesday 2021W19"
+  ) +
+  
+  # add my theme
+  my_theme
+
+my_plot
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 6, height = 9, units = "in", res = 300))
+  
+```
