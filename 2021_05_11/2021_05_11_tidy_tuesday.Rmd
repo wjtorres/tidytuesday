@@ -1,0 +1,161 @@
+---
+title: "TidyTemplate"
+author: Jackie Torres
+date: 2021-05-11
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(urbnmapr) # for mapping county level data
+library(scico) # for fill palette
+library(scales) # for formatting scales as percentage
+
+library(showtext) # for adding google font
+library(ragg) # for agg_png function; draw to a PNG file
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-05-11")
+
+```
+
+
+# Readme
+
+```{r Readme, eval = interactive()}
+
+tt
+
+```
+
+
+# Pull Data
+
+```{r Glimpse}
+
+broadband <- tt$broadband
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+# create broadband data frame
+broadband <- tt$broadband %>%
+  rename(county_name = `COUNTY NAME`) %>%
+  mutate(`BROADBAND AVAILABILITY PER FCC` = as.numeric(`BROADBAND AVAILABILITY PER FCC`))
+
+# create counties data frame
+counties <- get_urbn_map(map = "counties", sf = TRUE)
+
+```
+
+
+# Visualize
+
+```{r Visualize}
+
+# add google fonts
+
+font_add_google(name = "Ubuntu", family = "one")
+
+# my colors
+
+white <- "#ffffff"
+d_grey <- "#404040"
+
+# my theme
+
+my_theme <- theme(
+  
+  # title
+  plot.title = element_text(family = "one", size = 14, color = d_grey, hjust = 0, margin = margin(10, 0, 0, 0),),
+  
+  # subtitle
+  plot.subtitle = element_text(family = "one", size = 12, color = d_grey, hjust = 0, margin = margin(0, 0, 0, 0),),
+  
+  # caption
+  plot.caption = element_text(family = "one", size = 10, color = d_grey, hjust = 0, margin = margin(10, 0, 0, 0),),
+  
+  # panel and plot background
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  panel.background = element_rect(fill = white, color = NA),
+  plot.background = element_rect(fill = white),
+  
+  # axis
+  axis.title = element_blank(),
+  axis.text = element_blank(),
+  axis.ticks = element_blank(),
+  
+  # legend
+  legend.title = element_text(family = "one", size = 12, color = d_grey),
+  legend.text = element_text(family = "one", size = 12, color = d_grey),
+  legend.direction = "vertical",
+  legend.key.size = unit(1.5, "cm"),
+  legend.key.width = unit(0.5,"cm"), 
+  legend.background = element_rect(fill = white,
+                                  colour = white)
+)
+
+# my plot
+
+my_plot <- 
+  
+  # take counties data frame and filter to Colorado only
+  counties %>% filter(state_abbv == "CO") %>%
+  
+  # then left join to the broadband df and join by county name
+  left_join(broadband, by = "county_name") %>%
+  
+  # start ggplot layers
+  ggplot() +
+  
+  # county data layer
+  geom_sf(mapping = aes(fill = `BROADBAND AVAILABILITY PER FCC`),
+          color = white, 
+          size = 0.15) +
+  
+    coord_sf(datum = NA) +
+  
+  # scales
+  
+  scale_fill_scico(palette = 'davos', direction = -1, labels = scales::percent) +
+  
+  # labs
+  labs(
+    title = "Broadband Availability in Colorado",
+    subtitle = "Percent of people per county with access to fixed terrestrial \nbroadband at speeds of 25 Mbps/3 Mbps as of the end of 2017",
+    fill = "",
+    caption = "Design: Jackie Torres | Source: Microsoft GitHub | #TidyTuesday 2021W20"
+  ) +
+  
+  # add my theme
+  my_theme
+
+my_plot
+
+# save image
+
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 10, height = 5, units = "in", res = 300))
+
+
+```
