@@ -1,0 +1,132 @@
+---
+title: "TidyTemplate"
+author: Jackie Torres
+date: 2021-05-18
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+
+library(ragg)
+library(showtext)
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-05-18")
+
+```
+
+
+# Readme
+
+```{r Readme, eval = interactive()}
+
+tt
+
+```
+
+# Pull Data
+
+```{r Glimpse}
+
+survey <- tt$survey
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+# create a data frame with the age groups variable; count the number of respondents in each age group
+age <- survey %>%
+  count(how_old_are_you)
+
+# create a factor with levels
+age$how_old_are_you <- factor(c("18-24", "25-34", "35-44", "45-54", "55-64", "65 or over", "under 18"),
+                              levels = c("under 18", "18-24", "25-34", "35-44", "45-54", "55-64", "65 or over"))
+
+```
+
+
+# Visualize
+
+```{r Visualize}
+
+# my fonts
+font_add_google(name = "Crimson Text", family = "one")
+
+# my colors
+white <- "#FFFFFF"
+d_grey <- "#7d7d7d"
+grey <- "#C5CBD3"
+blue <- "#009FB7"
+
+# my theme
+my_theme <- theme(
+  
+   # title
+  plot.title = element_text(family = "one", color = d_grey, size = 16, hjust = 0, margin = margin(5, 0, 10, 0)),
+  
+  # subtitle
+  plot.subtitle = element_text(family = "one", color = d_grey, size = 14, hjust = 0, margin = margin(0, 0, 20, 0)),
+  
+  # caption
+  plot.caption = element_text(family = "one", color = d_grey, size = 10, hjust = 0, margin = margin(20, 0, 10, 0)),
+  
+  # plot and panel background
+  plot.background = element_rect(fill = white),
+  panel.background = element_rect(fill = white),
+  
+  # remove grid
+  panel.grid.major = element_blank(), 
+  panel.grid.minor = element_blank(),
+  
+    # axis text
+  axis.title = element_text(family = "one", color = d_grey, size = 12),
+  axis.text = element_text(family = "one", color = d_grey, size = 12),
+
+  # axis ticks
+  axis.ticks = element_blank()
+)
+
+# my plot
+my_plot <- age %>%
+  
+  ggplot(aes(x = how_old_are_you, y = n)) +
+  
+  geom_col(fill = ifelse(age$how_old_are_you != "25-34", grey, blue)) +
+
+  # labs
+  labs(
+    title = "Ask a Manager Survey ",
+    subtitle = "Most survey respondents were between 25 to 34 years of age",
+    x = "Age group",
+    y = "Number of respondents",
+    caption = "Design: Jackie Torres | Source: Ask a Manager | #TidyTuesday 2021W21"
+  ) +
+  
+  # use my theme
+  my_theme
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 7, height = 5, units = "in", res = 300))
+  
+```
+
