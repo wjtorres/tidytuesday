@@ -1,0 +1,129 @@
+---
+title: "TidyTemplate"
+author: Jackie Torres
+date: 2021-05-25
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+
+library(ragg)
+library(showtext)
+
+# open showtext
+showtext_opts(dpi = 300)
+showtext_auto(enable = TRUE)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-05-25")
+
+```
+
+# Pull Data
+
+```{r Glimpse}
+
+records <- tt$records
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+# create a date frame that includes only singla laps and no shortcuts
+records <- records %>%
+  filter(type == "Single Lap", shortcut == "No")
+
+```
+
+
+# Visualize
+
+```{r Visualize}
+
+# my fonts
+font_add_google(name = "Press Start 2P", family = "one")
+
+# my colors
+white <- "#FFFFFF"
+black <- "#000000"
+d_grey <- "#7d7d7d"
+blue <- "#049CD8"
+green <- "#43B047"
+
+# my theme
+my_theme <- theme(
+  
+   # title
+  plot.title = element_text(family = "one", color = green, size = 11, hjust = 0, margin = margin(10, 0, 10, 0)),
+  
+  # subtitle
+  plot.subtitle = element_text(family = "one", color = green, size = 11, hjust = 0, margin = margin(0, 0, 20, 0)),
+  
+  # caption
+  plot.caption = element_text(family = "one", color = d_grey, size = 6, hjust = 0, margin = margin(20, 0, 10, 0)),
+  
+  # plot margin
+  plot.margin = unit(c(0, .3, 0, .3), "in"),
+  
+  # plot and panel background
+  plot.background = element_rect(fill = black),
+  panel.background = element_rect(fill = black),
+  
+  # remove grid
+  panel.grid.major = element_blank(), 
+  panel.grid.minor = element_blank(),
+  
+  # axis text
+  axis.title = element_text(family = "one", color = d_grey, size = 8),
+  axis.text = element_text(family = "one", color = d_grey, size = 8),
+
+  # axis ticks
+  axis.ticks = element_blank()
+)
+
+# my plot
+my_plot <- records %>%
+  
+  ggplot(aes(x = reorder(track, record_duration, FUN = max), y = record_duration)) +
+  
+  # boxplot layer
+  geom_boxplot(fill = blue, color = d_grey) +
+  
+  # scales
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 3200)) +
+  
+  # flip axis
+  coord_flip() +
+
+  # labs
+  labs(
+    title = "Mario Kart 64 Tracks: Duration of World Records",
+    subtitle = "Single Lap, No Shortcuts",
+    x = NULL,
+    y = "Record Duration (In Days)",
+    caption = "Design: Jackie Torres | Source: Mario Kart World Records | #TidyTuesday 2021W22"
+  ) +
+  
+  # use my theme
+  my_theme
+
+# save image
+ggsave("my_plot.png",
+       plot = my_plot,
+       device = agg_png(width = 10, height = 8, units = "in", res = 300))
+  
+```
