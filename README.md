@@ -4,6 +4,10 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 ## Most recent plots
 
+### 2021-05-18 | Week 22 | Mario Kart World Records | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_05_25)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_05_25/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_05_25)
+
 ### 2021-05-18 | Week 21 | Ask a Manager Salary Survey | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_05_18)
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_05_18/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_05_18)
@@ -12,15 +16,14 @@ These are my contributions to the [#TidyTuesday](https://github.com/rfordatascie
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_05_11/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_05_11)
 
-### 2021-05-04 | Week 19 | Water Access Points | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_05_04)
-
-[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_05_04/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_05_04)
-
-
 <details>
   <summary>2021 codes and plots</summary>
  
-### 2021-04-27 | Week 18 | US Post Offices | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_04_27)
+### 2021-05-04 | Week 19 | Water Access Points | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_05_04)
+
+[![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_05_04/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_05_04)
+ 
+ ### 2021-04-27 | Week 18 | US Post Offices | [Code](https://github.com/wjtorres/tidytuesday/tree/master/2021_04_27)
 
 [![alt text](https://github.com/wjtorres/tidytuesday/blob/master/2021_04_27/my_plot.png)](https://github.com/wjtorres/tidytuesday/tree/master/2021_04_20)
 
